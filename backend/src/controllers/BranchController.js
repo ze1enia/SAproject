@@ -50,7 +50,7 @@ export class BranchController {
                         ${branch.getStatusText()}
                     </span>
                 </div>
-                <p>📍 ${branch.address}</p>
+                <p> ${branch.address}</p>
                 <button class="select-btn" ${!isOpen ? 'disabled' : ''}>
                     ${isSelected ? 'เลือกอยู่' : 'เลือกสาขานี้'}
                 </button>
