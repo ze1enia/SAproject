@@ -1,0 +1,31 @@
+# Dependencies (โฟลเดอร์ไลบรารี ห้ามเอาขึ้นเพราะมีขนาดใหญ่)
+node_modules/
+jspm_packages/
+
+# Environment Variables (ไฟล์เก็บความลับ เช่น รหัสผ่าน DB, Key)
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Logs (ไฟล์บันทึกประวัติการรัน/error)
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build / Output (กรณีใช้ตัว build หรือ bundle โค้ด)
+dist/
+build/
+
+# Operating System Files (ไฟล์ขยะของ Windows / macOS)
+.DS_Store
+Thumbs.db
+
+# IDE / Code Editor Settings (การตั้งค่าโปรแกรมเขียนโค้ดส่วนตัว)
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
