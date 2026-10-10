@@ -1,0 +1,17 @@
+﻿branch_id (PK),branch_name,address
+B001,Sunee,Owner@123
+B002,Kittipong,Staff@001
+B003,Pimchanok,Staff@002
+B004,Thanakorn,Staff@003
+B005,Natcha,Staff@004
+B006,Pakorn,Staff@005
+B007,Chanakan,Staff@006
+B008,Phurinat,Staff@007
+B009,Siriporn,Staff@008
+B010,Athicha,Staff@009
+B011,Woramet,Staff@010
+B012,Paweenuch,Staff@011
+B013,Nattapon,Staff@012
+B014,Rattanaporn,Staff@013
+B015,Teerapat,Staff@014
+B016,Manatsawi,Staff@015

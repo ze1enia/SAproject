@@ -1,0 +1,5 @@
+﻿inspection_id,arrival_id,inspected_by,inspection_date,result,remarks
+QIN0001,ARR0001,USR004,30/9/2026 15:00,Pass,Packaging and quantities checked; mock inspection
+QIN0002,ARR0003,USR002,2/10/2026 15:00,PassWithRemarks,Packaging and quantities checked; mock inspection
+QIN0003,ARR0005,USR004,4/10/2026 15:00,Pass,Packaging and quantities checked; mock inspection
+QIN0004,ARR0008,USR003,7/10/2026 15:00,Pass,Packaging and quantities checked; mock inspection

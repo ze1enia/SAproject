@@ -1,0 +1,31 @@
+﻿category_id (PK),category_name,description
+CAT001,Snacks and Candy,Chips crackers candy and snack foods
+CAT002,Beverages,Water soft drinks juice and energy drinks
+CAT003,Instant Noodles,Instant noodles and ready to cook noodle products
+CAT004,Canned Food,Canned fish canned meat and canned vegetables
+CAT005,Rice and Grains,Rice beans and other grain products
+CAT006,Cooking Ingredients,Cooking sauces spices seasonings and condiments
+CAT007,Cooking Oil,Cooking oils and edible fats
+CAT008,Sauces and Condiments,Ketchup mayonnaise chili sauce and dipping sauces
+CAT009,Bakery and Bread,Bread buns cakes and packaged bakery products
+CAT010,Dairy Products,Milk cheese butter and dairy products
+CAT011,Ice Cream,Frozen desserts and ice cream products
+CAT012,Frozen Food,Frozen meals meat seafood and vegetables
+CAT013,Fresh Food,Fresh ingredients and perishable food products
+CAT014,Eggs,Fresh eggs and packaged egg products
+CAT015,Meat and Seafood,Packaged meat seafood and processed meat products
+CAT016,Fruits and Vegetables,Fresh fruits and vegetables
+CAT017,Personal Care,Soap shampoo toothpaste and personal hygiene products
+CAT018,Household Cleaning,Detergents cleaning liquids and household cleaners
+CAT019,Laundry Products,Laundry detergent fabric softener and stain removers
+CAT020,Paper Products,Tissues toilet paper and paper towels
+CAT021,Home Supplies,General household supplies and daily necessities
+CAT022,Stationery,Pens pencils notebooks and office supplies
+CAT023,Pet Supplies,Pet food treats and basic pet care products
+CAT024,Health and Wellness,First aid supplies and general wellness products
+CAT025,Baby Products,Diapers baby wipes and baby care essentials
+CAT026,Oral Care,Toothbrushes toothpaste and mouthwash
+CAT027,Beauty and Cosmetics,Skincare cosmetics and beauty accessories
+CAT028,Kitchen Supplies,Kitchen utensils food containers and kitchen accessories
+CAT029,Tobacco Products,Tobacco and related retail products
+CAT030,Miscellaneous,Products that do not fit other categories

@@ -1,0 +1,5 @@
+﻿arrival_id,purchase_order_id,received_by,arrival_date,delivery_status,notes
+ARR0001,PO0001,USR003,30/9/2026 14:00,Received,Mock delivery receipt; quantities for testing only
+ARR0003,PO0003,USR001,2/10/2026 14:00,Partial,Mock delivery receipt; quantities for testing only
+ARR0005,PO0005,USR003,4/10/2026 14:00,Received,Mock delivery receipt; quantities for testing only
+ARR0008,PO0008,USR002,7/10/2026 14:00,Received,Mock delivery receipt; quantities for testing only

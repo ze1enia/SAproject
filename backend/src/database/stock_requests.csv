@@ -1,0 +1,13 @@
+﻿request_id,branch_id,requested_by,reviewed_by,request_date,status,feedback,reviewed_at
+REQ0001,BR001,USR001,,7/10/2026 09:15,Pending,Awaiting owner review,
+REQ0002,BR002,USR002,USR004,5/10/2026 09:15,Approved,Approved for replenishment,6/10/2026 10:30
+REQ0003,BR001,USR003,USR001,3/10/2026 09:15,Cancelled,Cancelled due to duplicate request,4/10/2026 10:30
+REQ0004,BR002,USR004,USR002,1/10/2026 09:15,Approved,Approved for replenishment,2/10/2026 10:30
+REQ0005,BR001,USR001,,29/9/2026 09:15,Pending,Awaiting owner review,
+REQ0006,BR002,USR002,USR004,27/9/2026 09:15,Approved,Approved for replenishment,28/9/2026 10:30
+REQ0007,BR001,USR003,USR001,25/9/2026 09:15,Cancelled,Cancelled due to duplicate request,26/9/2026 10:30
+REQ0008,BR002,USR004,USR002,23/9/2026 09:15,Approved,Approved for replenishment,24/9/2026 10:30
+REQ0009,BR001,USR001,,9/10/2026 09:15,Pending,Awaiting owner review,
+REQ0010,BR002,USR002,USR004,7/10/2026 09:15,Approved,Approved for replenishment,8/10/2026 10:30
+REQ0011,BR001,USR003,USR001,5/10/2026 09:15,Cancelled,Cancelled due to duplicate request,6/10/2026 10:30
+REQ0012,BR002,USR004,USR002,3/10/2026 09:15,Approved,Approved for replenishment,4/10/2026 10:30
