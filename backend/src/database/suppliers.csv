@@ -1,0 +1,6 @@
+﻿supplier_id,supplier_name,contact_person,phone,email,address
+SUP001,Siam Snack Distribution,Narin S.,02-555-0101,sales@siamsnack.example,"Bangkok, Thailand"
+SUP002,FreshMart Beverage Supply,Pimchanok K.,02-555-0102,orders@freshmartbev.example,"Nonthaburi, Thailand"
+SUP003,Everyday Grocery Wholesale,Anan P.,02-555-0103,contact@everydaywholesale.example,"Pathum Thani, Thailand"
+SUP004,CleanHome Consumer Goods,Suda R.,02-555-0104,supply@cleanhome.example,"Samut Prakan, Thailand"
+SUP005,Farm Fresh Foods,Krit T.,02-555-0105,fresh@farmfresh.example,"Nakhon Pathom, Thailand"

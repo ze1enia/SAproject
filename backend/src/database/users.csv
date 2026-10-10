@@ -1,0 +1,17 @@
+﻿user_id,username,password_hash,role_id,branch_id
+USR001,Sunee,,Owner,ALL
+USR002,Kittipong,,Staff,กรุงเทพมหานคร
+USR003,Pimchanok,,Staff,เชียงใหม่
+USR004,Thanakorn,,Staff,ภูเก็ต
+USR005,Natcha,,Staff,ขอนแก่น
+USR006,Pakorn,,Staff,ชลบุรี
+USR007,Chanakan,,Staff,นครราชสีมา
+USR008,Phurinat,,Staff,เชียงราย
+USR009,Siriporn,,Staff,สงขลา
+USR010,Athicha,,Staff,สุราษฎร์ธานี
+USR011,Woramet,,Staff,พิษณุโลก
+USR012,Paweenuch,,Staff,อุดรธานี
+USR013,Nattapon,,Staff,นครปฐม
+USR014,Rattanaporn,,Staff,ระยอง
+USR015,Teerapat,,Staff,พระนครศรีอยุธยา
+USR016,Manatsawi,,Staff,อุบลราชธานี

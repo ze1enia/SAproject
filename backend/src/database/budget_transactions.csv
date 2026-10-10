@@ -1,0 +1,9 @@
+﻿transaction_id,budget_id,transaction_type,amount,description,transaction_date,recorded_by
+BTX0001,BUD0001,Expense,2933.66,Mock inventory purchase expense,2/10/2026 16:00,USR002
+BTX0002,BUD0001,Income,4310.86,Mock sales income allocation,3/10/2026 16:00,USR003
+BTX0003,BUD0002,Expense,1640.23,Mock inventory purchase expense,3/10/2026 16:00,USR003
+BTX0004,BUD0002,Income,7632.77,Mock sales income allocation,4/10/2026 16:00,USR004
+BTX0005,BUD0003,Expense,6371.46,Mock inventory purchase expense,4/10/2026 16:00,USR004
+BTX0006,BUD0003,Income,3248.96,Mock sales income allocation,5/10/2026 16:00,USR001
+BTX0007,BUD0004,Expense,4836.05,Mock inventory purchase expense,5/10/2026 16:00,USR001
+BTX0008,BUD0004,Income,7346.38,Mock sales income allocation,6/10/2026 16:00,USR002

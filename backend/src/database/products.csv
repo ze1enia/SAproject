@@ -1,0 +1,61 @@
+﻿product_id,category_id,product_name,barcode,unit,cost_price,selling_price,product_status
+PRD001,CAT001,Potato Chips Original,2E+12,pack,12,20,active
+PRD002,CAT001,Chocolate Bar Milk,2E+12,piece,10,18,active
+PRD003,CAT002,Bottled Drinking Water 600ml,2E+12,bottle,4,7,active
+PRD004,CAT002,Cola 325ml,2E+12,can,9,15,active
+PRD005,CAT003,Instant Noodles Pork Flavor,2E+12,pack,5,8,active
+PRD006,CAT003,Instant Rice Noodles Tom Yum,2E+12,pack,7,12,active
+PRD007,CAT004,Canned Sardines in Tomato Sauce,2E+12,can,18,27,active
+PRD008,CAT004,Canned Sweet Corn,2E+12,can,16,25,active
+PRD009,CAT005,Jasmine Rice 1kg,2E+12,bag,32,45,active
+PRD010,CAT005,Glutinous Rice 1kg,2E+12,bag,30,43,active
+PRD011,CAT006,Chicken Seasoning Powder 100g,2E+12,pack,15,23,active
+PRD012,CAT006,Ground Black Pepper 50g,2E+12,bottle,22,35,active
+PRD013,CAT007,Soybean Cooking Oil 1L,2E+12,bottle,42,55,active
+PRD014,CAT007,Palm Cooking Oil 1L,2E+12,bottle,38,49,active
+PRD015,CAT008,Tomato Ketchup 300g,2E+12,bottle,20,32,active
+PRD016,CAT008,Sweet Chili Sauce 250ml,2E+12,bottle,18,29,active
+PRD017,CAT009,Sliced White Bread,2E+12,pack,24,35,active
+PRD018,CAT009,Butter Cake Slice,2E+12,piece,12,20,active
+PRD019,CAT010,Fresh Milk  UHT 1L,2E+12,carton,34,45,active
+PRD020,CAT010,Cheddar Cheese Slices 10 pcs,2E+12,pack,42,59,active
+PRD021,CAT011,Vanilla Ice Cream 500ml,2E+12,tub,65,89,active
+PRD022,CAT011,Chocolate Ice Cream Bar,2E+12,piece,15,25,active
+PRD023,CAT012,Frozen Chicken Nuggets 400g,2E+12,pack,75,99,active
+PRD024,CAT012,Frozen Mixed Vegetables 300g,2E+12,pack,35,49,active
+PRD025,CAT013,Tofu 200g,2E+12,pack,10,16,active
+PRD026,CAT013,Fish Balls 500g,2E+12,pack,45,65,active
+PRD027,CAT014,Large Eggs 10 pcs,2E+12,tray,38,49,active
+PRD028,CAT014,Medium Eggs 10 pcs,2E+12,tray,32,42,active
+PRD029,CAT015,Pork Sausage 200g,2E+12,pack,35,49,active
+PRD030,CAT015,Frozen Shrimp 300g,2E+12,pack,85,119,active
+PRD031,CAT016,Banana 1kg,2E+12,kg,25,39,active
+PRD032,CAT016,Chinese Kale 1kg,2E+12,kg,30,45,active
+PRD033,CAT017,Bath Soap 100g,2E+12,bar,12,20,active
+PRD034,CAT017,Shampoo 180ml,2E+12,bottle,45,65,active
+PRD035,CAT018,Dishwashing Liquid 500ml,2E+12,bottle,22,35,active
+PRD036,CAT018,Toilet Cleaner 500ml,2E+12,bottle,28,42,active
+PRD037,CAT019,Laundry Detergent 800g,2E+12,bag,48,69,active
+PRD038,CAT019,Fabric Softener 600ml,2E+12,bottle,32,49,active
+PRD039,CAT020,Facial Tissue Box,2E+12,box,18,29,active
+PRD040,CAT020,Toilet Paper 6 rolls,2E+12,pack,35,49,active
+PRD041,CAT021,Plastic Storage Container,2E+12,piece,25,39,active
+PRD042,CAT021,Garbage Bags 30 pcs,2E+12,pack,22,35,active
+PRD043,CAT022,Ballpoint Pen Blue,2E+12,piece,5,10,active
+PRD044,CAT022,A5 Notebook 80 pages,2E+12,book,12,22,active
+PRD045,CAT023,Dry Cat Food 1kg,2E+12,bag,65,89,active
+PRD046,CAT023,Dog Treats 100g,2E+12,pack,28,45,active
+PRD047,CAT024,Adhesive Bandages 10 pcs,2E+12,box,18,29,active
+PRD048,CAT024,Digital Thermometer,2E+12,piece,95,139,active
+PRD049,CAT025,Baby Diapers Small 10 pcs,2E+12,pack,55,75,active
+PRD050,CAT025,Baby Wet Wipes 80 sheets,2E+12,pack,25,39,active
+PRD051,CAT026,Soft Toothbrush,2E+12,piece,12,20,active
+PRD052,CAT026,Mint Toothpaste 100g,2E+12,tube,28,42,active
+PRD053,CAT027,Facial Cleanser 100ml,2E+12,tube,55,79,active
+PRD054,CAT027,Lip Balm,2E+12,piece,25,39,active
+PRD055,CAT028,Kitchen Sponge 3 pcs,2E+12,pack,10,18,active
+PRD056,CAT028,Stainless Steel Spoon,2E+12,piece,15,25,active
+PRD057,CAT029,Cigarettes Pack Mock Item,2E+12,pack,0,0,active
+PRD058,CAT029,Lighter,2E+12,piece,8,15,active
+PRD059,CAT030,Batteries AA 2 pcs,2E+12,pack,18,29,active
+PRD060,CAT030,Umbrella Compact,2E+12,piece,75,109,active

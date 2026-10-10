@@ -1,0 +1,5 @@
+﻿budget_id,branch_id,period_start,period_end,allocated_amount,budget_status
+BUD0001,BR001,1/10/2026,31/10/2026,100000,Active
+BUD0002,BR002,1/10/2026,31/10/2026,50000,Active
+BUD0003,BR001,1/10/2026,31/10/2026,100000,Closed
+BUD0004,BR002,1/10/2026,31/10/2026,75000,Active
