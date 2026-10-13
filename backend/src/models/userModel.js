@@ -1,26 +1,17 @@
-const users = [];
+const pool = require('../config/db');
 
 const userModel = {
-    findByEmail: async (email) => {
-        return users.find((user) => user.email === email);
-    },
+  findByUsername: async (username) => {
+    const sql = 'SELECT * FROM users WHERE LOWER(username) = LOWER(?) LIMIT 1';
+    const [rows] = await pool.query(sql, [username.trim()]);
+    return rows[0] || null;
+  },
 
-    findById: async (id) => {
-        return users.find((user) => user.id === id)
-    },
-
-    create: async (userData) => {
-        const newUser = {
-            id: Date.now().toString(),
-            email: userData.email,
-            password: userData.password,
-            name: userData.name || 'User',
-            createAt: new Date() 
-
-        };
-        users.push(newUser);
-        return newUser;
-    }
+  findById: async (id) => {
+    const sql = 'SELECT * FROM users WHERE user_id = ? LIMIT 1';
+    const [rows] = await pool.query(sql, [id]);
+    return rows[0] || null;
+  }
 };
 
 module.exports = userModel;
