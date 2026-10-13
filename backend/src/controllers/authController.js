@@ -24,6 +24,22 @@ const authController = {
         message: error.message 
       });
     }
+  },
+
+  //Returns the signed-in user's status (user_id / role / branch) for the welcome page
+  me: async (req, res) => {
+    try {
+      const user = await authService.getProfile(req.user);
+      return res.status(200).json({
+        success: true,
+        data: { user }
+      });
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        message: error.message
+      });
+    }
   }
 };
 

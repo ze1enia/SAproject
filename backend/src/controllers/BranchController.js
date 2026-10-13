@@ -1,70 +1,145 @@
+import { BranchService } from '../services/BranchService.js';
+
+const branchService = new BranchService();
+
 export class BranchController {
-    constructor(service, elements) {
-        this.service = service;
-        this.elements = elements;
-        this.selectedBranch = null;
-    }
 
-    async init() {
-        this.bindEvents();
-        await this.loadAndRenderBranches();
-    }
+    // 1. ดึงรายการสาขาทั้งหมด หรือค้นหาผ่าน Query ?search=
+    static async getBranches(req, res) {
+        try {
+            const { search } = req.query;
+            let branches;
 
-    bindEvents() {
-        this.elements.searchInput.addEventListener('input', async (e) => {
-            const query = e.target.value;
-            const results = await this.service.searchBranches(query);
-            this.renderList(results);
-        });
-    }
+            if (search) {
+                branches = await branchService.searchBranches(search);
+            } else {
+                branches = await branchService.getAllBranches();
+            }
 
-    async loadAndRenderBranches() {
-        const branches = await this.service.getAllBranches();
-        this.renderList(branches);
-    }
-
-    handleSelectBranch(branch) {
-        this.selectedBranch = branch;
-        this.elements.selectedBranchText.textContent = `สาขาที่เลือก: ${branch.branch_name}`;
-    }
-
-    renderList(branches) {
-        this.elements.branchContainer.innerHTML = '';
-
-        if (branches.length === 0) {
-            this.elements.branchContainer.innerHTML = '<p class="empty-msg">ไม่พบสาขาที่คุณค้นหา</p>';
-            return;
+            return res.status(200).json({
+                success: true,
+                count: branches.length,
+                data: branches
+            });
+        } catch (error) {
+            return res.status(500).json({
+                success: false,
+                message: 'ไม่สามารถดึงข้อมูลรายการสาขาได้',
+                error: error.message
+            });
         }
+    }
 
-        branches.forEach(branch => {
-            const card = document.createElement('div');
-            const isSelected = this.selectedBranch?.branch_id === branch.branch_id;
-            const isOpen = branch.isOpen();
+    // 2. ดึงข้อมูลเฉพาะ 1 สาขาด้วย ID
+    static async getBranchById(req, res) {
+        try {
+            const { id } = req.params;
+            const branch = await branchService.getBranchById(id);
 
-            card.className = `branch-card ${isSelected ? 'active' : ''}`;
-            
-            card.innerHTML = `
-                <div class="branch-header">
-                    <h3>${branch.branch_name}</h3>
-                    <span class="status ${isOpen ? 'open' : 'closed'}">
-                        ${branch.getStatusText()}
-                    </span>
-                </div>
-                <p> ${branch.address}</p>
-                <button class="select-btn" ${!isOpen ? 'disabled' : ''}>
-                    ${isSelected ? 'เลือกอยู่' : 'เลือกสาขานี้'}
-                </button>
-            `;
-
-            const selectBtn = card.querySelector('.select-btn');
-            if (isOpen) {
-                selectBtn.addEventListener('click', () => {
-                    this.handleSelectBranch(branch);
-                    this.renderList(branches);
+            if (!branch) {
+                return res.status(404).json({
+                    success: false,
+                    message: `ไม่พบข้อมูลสาขารหัส ${id}`
                 });
             }
 
-            this.elements.branchContainer.appendChild(card);
-        });
+            return res.status(200).json({
+                success: true,
+                data: branch
+            });
+        } catch (error) {
+            return res.status(500).json({
+                success: false,
+                message: 'เกิดข้อผิดพลาดในการดึงข้อมูลสาขา',
+                error: error.message
+            });
+        }
+    }
+
+    // 3. เพิ่มสาขาใหม่
+    static async createBranch(req, res) {
+        try {
+            const { branch_id, branch_name, address } = req.body;
+
+            if (!branch_id || !branch_name) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'กรุณากรอก branch_id และ branch_name ให้ครบถ้วน'
+                });
+            }
+
+            const newBranch = await branchService.createBranch({
+                branch_id,
+                branch_name,
+                address: address || ''
+            });
+
+            return res.status(201).json({
+                success: true,
+                message: 'เพิ่มสาขาเรียบร้อยแล้ว',
+                data: newBranch
+            });
+        } catch (error) {
+            return res.status(500).json({
+                success: false,
+                message: 'ไม่สามารถเพิ่มสาขาได้',
+                error: error.message
+            });
+        }
+    }
+
+    // 4. แก้ไขข้อมูลสาขา
+    static async updateBranch(req, res) {
+        try {
+            const { id } = req.params;
+            const { branch_name, address } = req.body;
+
+            const updatedBranch = await branchService.updateBranch(id, { branch_name, address });
+
+            if (!updatedBranch) {
+                return res.status(404).json({
+                    success: false,
+                    message: `ไม่พบสาขารหัส ${id} ที่ต้องการแก้ไข`
+                });
+            }
+
+            return res.status(200).json({
+                success: true,
+                message: 'อัปเดตข้อมูลสาขาเรียบร้อยแล้ว',
+                data: updatedBranch
+            });
+        } catch (error) {
+            return res.status(500).json({
+                success: false,
+                message: 'ไม่สามารถแก้ไขข้อมูลสาขาได้',
+                error: error.message
+            });
+        }
+    }
+
+    // 5. ลบสาขา
+    static async deleteBranch(req, res) {
+        try {
+            const { id } = req.params;
+            const isDeleted = await branchService.deleteBranch(id);
+
+            if (!isDeleted) {
+                return res.status(404).json({
+                    success: false,
+                    message: `ไม่พบสาขารหัส ${id} ที่ต้องการลบ`
+                });
+            }
+
+            return res.status(200).json({
+                success: true,
+                message: `ลบสาขารหัส ${id} เรียบร้อยแล้ว`
+            });
+        } catch (error) {
+            return res.status(500).json({
+                success: false,
+                message: 'ไม่สามารถลบสาขาได้',
+                error: error.message
+            });
+        }
     }
 }

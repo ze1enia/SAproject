@@ -1,0 +1,178 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+
+    background-image: url("../elements/serverbg.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+
+    color: white;
+    font-family: Arial, sans-serif;
+}
+
+.welcome-page {
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    padding: 70px 20px 75px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.brand {
+    position: absolute;
+    top: 30px;
+    left: 30px;
+
+    font-size: 30px;
+    font-weight: bold;
+    letter-spacing: 2px;
+}
+
+/* Close icon shown in the reference welcome page */
+.close-button {
+    position: absolute;
+    top: 22px;
+    right: 30px;
+
+    border: none;
+    background: transparent;
+    color: white;
+    font-size: 27px;
+    font-weight: normal;
+    cursor: pointer;
+}
+
+.close-button:hover {
+    color: #E9AD4B;
+}
+
+/* Same width, height, padding, and centered alignment as .login-box */
+.welcome-box {
+    width: 700px;
+    height: 400px;
+    max-width: 100%;
+    padding: 30px 95px;
+    font-size: 13px;
+
+    background: rgba(20, 15, 10, 0.85);
+    border-radius: 22px;
+
+    color: white;
+    text-align: left;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* Match the login heading style */
+.welcome-box h1 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 40px;
+    text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.7);
+}
+
+.user-name {
+    margin: 0 0 18px;
+    color: #F5E2C5;
+    font-size: 18px;
+    font-weight: bold;
+    letter-spacing: 1.5px;
+}
+
+.user-info {
+    width: 100%;
+    margin: 0 0 18px;
+}
+
+.user-info p {
+    display: grid;
+    grid-template-columns: 90px 1fr;
+    gap: 10px;
+    margin: 10px 0;
+    font-size: 17px;
+    letter-spacing: 1px;
+    text-align: left;
+}
+
+.user-info span {
+    font-weight: normal;
+}
+
+.user-info strong {
+    font-weight: bold;
+}
+
+
+.welcome-box .continue-button {
+    width: 100%;
+    padding: 16px;
+    margin-top: 5px;
+    margin-bottom: 6px;
+
+    background: #693000;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+}
+
+.welcome-box .continue-button:hover {
+    background: #87430A;
+}
+
+/*.policy {
+    margin: 8px 0 0;
+    color: #aaa;
+    font-size: 8px;
+    line-height: 1.5;
+    text-align: center;
+} */
+
+.footer-text {
+    position: absolute;
+    bottom: 4cqmin;
+    left: 0;
+    width: 100%;
+
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    letter-spacing: 1.5px;
+}
+
+/* Same responsive breakpoints as login.css */
+@media (max-width: 768px) {
+    .welcome-page {
+        padding-left: 24px;
+        padding-right: 24px;
+    }
+
+    .welcome-box {
+        height: auto;
+        min-height: 400px;
+        padding: 30px 35px;
+    }
+
+    .brand {
+        left: 20px;
+        font-size: 24px;
+    }
+
+    .close-button {
+        right: 20px;
+    }
+}
