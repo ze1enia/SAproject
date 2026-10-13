@@ -18,29 +18,35 @@
         <div class="login-box">
             <h1>Login</h1>
 
-            <input
-                type="text"
-                id="username"
-                name="username"
-                placeholder="username"
-            >
-
-            <div class="password-wrapper">
+            <form id="loginForm" novalidate>
                 <input
-                    type="password"
-                    id="password"
-                    name="password"
-                    placeholder="password"
+                    type="text"
+                    id="username"
+                    name="username"
+                    placeholder="username"
+                    autocomplete="username"
                 >
 
-                <button
-                    type="button"
-                    id="togglePassword"
-                    class="toggle-password"
-                >Show</button>
-            </div>
+                <div class="password-wrapper">
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="password"
+                        autocomplete="current-password"
+                    >
 
-            <button type="button">Continue</button>
+                    <button
+                        type="button"
+                        id="togglePassword"
+                        class="toggle-password"
+                    >Show</button>
+                </div>
+
+                <button type="submit" id="loginButton">Continue</button>
+            </form>
+
+            <p class="status-message" id="statusMsg" role="status"></p>
 
             <p class="policy">
                 By clicking continue, you agree to our Management Policy.
@@ -65,5 +71,7 @@
             togglePassword.textContent = isHidden ? 'Hide' : 'Show';
         });
     </script>
+
+    <script src="js/auth.js"></script>
 </body>
 </html>

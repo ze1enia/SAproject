@@ -4,8 +4,8 @@ const router = express.Router();
 
 const stockRequestController = require("../controllers/stockRequestController");
 
-// เปลี่ยนชื่อ Middleware ให้ตรงกับโปรเจกต์ของคุณ
-const { authenticate, authorize } = require("../middleware/auth");
+const authenticate = require("../middlewares/authMiddleware");
+const authorize = require("../middlewares/authorize");
 
 // ต้อง Login และมีสิทธิ์เป็น Shop Owner
 router.get(

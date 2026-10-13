@@ -143,6 +143,22 @@ body {
     background: #87430A;
 }
 
+/* Login feedback message */
+.status-message {
+    min-height: 18px;
+    margin: 6px 0 0;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+}
+
+.status-message.error {
+    color: #F08C7A;
+}
+
+.status-message.success {
+    color: #9FD48B;
+}
+
 /* Footer text */
 .footer-text {
     position: absolute;
