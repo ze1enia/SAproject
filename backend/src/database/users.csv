@@ -1,5 +1,5 @@
 ﻿user_id,username,password_hash,role_id,branch_id
-USR001,Sunee,$2a$10$umlPoGlY9081MewTkxcbWepNGbptUaU6wJbzqrTAFUWs2SMqMEIfO,Owner,ALL
+USR001,Sunee,$2a$10$umlPoGlY9081MewTkxcbWepNGbptUaU6wJbzqrTAFUWs2SMqMEIfO,Owner,ALL-ACCESS
 USR002,Kittipong,$2a$10$H8pAtH4pwjMpQIvTrhKiU.EOM2OpQvbLF8EqtUcX/a1A9knJtYDAS,Staff,กรุงเทพมหานคร
 USR003,Pimchanok,$2a$10$xrKkk.o.3bIoi1FWqB2YrepGqVcx/wFmImH0dccPaNRUDeucgv5bq,Staff,เชียงใหม่
 USR004,Thanakorn,$2a$10$ngVNKyJTpH45lZRHJ74Z2OQSWSAbQlLhmNpH3jfu.ybJ70uSlPbhy,Staff,ภูเก็ต

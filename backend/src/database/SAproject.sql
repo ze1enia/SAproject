@@ -407,7 +407,7 @@ CREATE TABLE `SA` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `SA` (`user_id`, `username`, `password_ori`, `role_id`, `branch_id`, `password_hash`) VALUES
-('USR001', 'Sunee', 'Owner@123', 'Owner', 'ALL', '$2a$10$umlPoGlY9081MewTkxcbWepNGbptUaU6wJbzqrTAFUWs2SMqMEIfO'),
+('USR001', 'Sunee', 'Owner@123', 'Owner', 'ALL-ACCESS', '$2a$10$umlPoGlY9081MewTkxcbWepNGbptUaU6wJbzqrTAFUWs2SMqMEIfO'),
 ('USR002', 'Kittipong', 'Staff@001', 'Staff', 'กรุงเทพมหานคร', '$2a$10$H8pAtH4pwjMpQIvTrhKiU.EOM2OpQvbLF8EqtUcX/a1A9knJtYDAS'),
 ('USR003', 'Pimchanok', 'Staff@002', 'Staff', 'เชียงใหม่', '$2a$10$xrKkk.o.3bIoi1FWqB2YrepGqVcx/wFmImH0dccPaNRUDeucgv5bq'),
 ('USR004', 'Thanakorn', 'Staff@003', 'Staff', 'ภูเก็ต', '$2a$10$ngVNKyJTpH45lZRHJ74Z2OQSWSAbQlLhmNpH3jfu.ybJ70uSlPbhy'),
