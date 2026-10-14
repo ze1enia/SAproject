@@ -248,10 +248,11 @@ button, input { font: inherit; }
 .branch-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  /* fits one screen: taller photo row, then two shorter rows */
-  grid-template-rows: 1.55fr 1fr 1fr;
+  /* fills the screen when there is room (taller photo row, then two shorter rows);
+     rows never get shorter than their content, so on small windows the page scrolls instead of clipping */
+  grid-template-rows: minmax(240px, 1.55fr) minmax(216px, 1fr) minmax(216px, 1fr);
   gap: 16px 44px;
-  height: max(560px, calc(100vh - 150px));
+  min-height: max(560px, calc(100vh - 150px));
 }
 .branch-card {
   min-width: 0;
@@ -357,7 +358,7 @@ button, input { font: inherit; }
 
 /* vertical columns */
 .column-chart {
-  flex: 1;
+  flex: 1 1 auto;
   min-height: 90px;
   display: flex;
   align-items: stretch;
@@ -423,6 +424,15 @@ button, input { font: inherit; }
 }
 .chart-tip.show { opacity: 1; }
 
+/* short desktop windows: tighter sidebar so every menu item stays visible above Log out */
+@media (min-width: 701px) and (max-height: 800px) {
+  .profile { margin-top: 12px; padding-top: 10px; padding-bottom: 8px; }
+  .profile h2 { font-size: 24px; }
+  .sidebar-menu { gap: 10px; padding: 18px 22px; }
+  .menu-item, .logout-button { min-height: 36px; padding-top: 6px; padding-bottom: 6px; font-size: 15px; }
+  .sidebar-footer { padding-bottom: 14px; }
+}
+
 /* -------------------------------------------------------------- tablet */
 
 @media (max-width: 1000px) {
@@ -464,7 +474,7 @@ button, input { font: inherit; }
   .data-table { font-size: 13px; }
   .data-table th, .data-table td { padding: 9px 10px; }
   .branch-table th:nth-child(3), .branch-table td:nth-child(3) { display: none; }
-  .branch-grid { grid-template-columns: 1fr; grid-template-rows: 240px; grid-auto-rows: auto; height: auto; }
+  .branch-grid { grid-template-columns: 1fr; grid-template-rows: 240px; grid-auto-rows: auto; min-height: 0; }
   .metric-card { min-height: 150px; }
   .branch-hero-info { margin-bottom: 24px; padding: 12px 16px; }
   .branch-hero-info p { font-size: 15px; }
