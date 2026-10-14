@@ -1,12 +1,39 @@
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import { BranchModel } from '../models/BranchModel.js';
+const fs = require('fs');
+const path = require('path');
+const { BranchModel } = require('../models/BranchModel');
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+// แยก 1 บรรทัด CSV ออกเป็นคอลัมน์ (รองรับค่าที่ครอบด้วย "..." และมี , อยู่ข้างใน)
+function parseCSVLine(line) {
+    const values = [];
+    let current = '';
+    let inQuotes = false;
 
-export class BranchService {
+    for (let i = 0; i < line.length; i++) {
+        const ch = line[i];
+        if (inQuotes) {
+            if (ch === '"' && line[i + 1] === '"') { current += '"'; i++; }
+            else if (ch === '"') inQuotes = false;
+            else current += ch;
+        } else if (ch === '"') {
+            inQuotes = true;
+        } else if (ch === ',') {
+            values.push(current.trim());
+            current = '';
+        } else {
+            current += ch;
+        }
+    }
+    values.push(current.trim());
+    return values;
+}
+
+// ครอบค่าด้วย "..." เมื่อมี , หรือ " อยู่ข้างใน
+function toCSVValue(value) {
+    const text = value === undefined || value === null ? '' : String(value);
+    return /[",\n]/.test(text) ? '"' + text.replace(/"/g, '""') + '"' : text;
+}
+
+class BranchService {
     constructor() {
         // กำหนด Path ชี้ไปยังไฟล์ branches.csv ในโฟลเดอร์ database
         this.csvPath = path.join(__dirname, '../database/branches.csv');
@@ -26,12 +53,14 @@ export class BranchService {
             if (lines.length < 2) return []; // ไม่มีข้อมูล (มีแค่ header หรือไฟล์ว่าง)
 
             // อ่านชื่อคอลัมน์จากแถวแรก (branch_id, branch_name, address)
-            const headers = lines[0].split(',').map(h => h.trim());
+            // ตัด BOM และหมายเหตุอย่าง "(PK)" ออกจากชื่อคอลัมน์
+            const headers = parseCSVLine(lines[0].replace(/^\uFEFF/, ''))
+                .map(h => h.replace(/\(.*?\)/g, '').trim());
 
             return lines.slice(1)
                 .filter(line => line.trim() !== '')
                 .map(line => {
-                    const values = line.split(',').map(v => v.trim());
+                    const values = parseCSVLine(line);
                     const row = {};
                     headers.forEach((header, index) => {
                         row[header] = values[index];
@@ -47,8 +76,11 @@ export class BranchService {
     // 2. ฟังก์ชันช่วยบันทึก Array ของ BranchModel กลับลงไฟล์ CSV
     writeCSV(branches) {
         try {
-            const header = 'branch_id,branch_name,address\n';
-            const rows = branches.map(b => `${b.branch_id},${b.branch_name},${b.address}`).join('\n');
+            // คงรูปแบบ header เดิมของไฟล์ไว้
+            const header = '\uFEFFbranch_id (PK),branch_name,address\n';
+            const rows = branches
+                .map(b => [b.branch_id, b.branch_name, b.address].map(toCSVValue).join(','))
+                .join('\n');
             fs.writeFileSync(this.csvPath, header + rows, 'utf8');
             return true;
         } catch (error) {
@@ -120,3 +152,5 @@ export class BranchService {
         return true;
     }
 }
+
+module.exports = { BranchService };

@@ -1,0 +1,276 @@
+(function () {
+    'use strict';
+ 
+    var API_ROOT = window.SA_API_ROOT; // set by js/config.js
+    var SESSION_KEY = 'sa_session';
+ 
+    var state = { session: null, menu: null, current: null };
+    var sidebarEl, mainEl;
+ 
+    /* -------------------------------------------------------------- helpers */
+ 
+    function loadSession() {
+        try { return JSON.parse(sessionStorage.getItem(SESSION_KEY)) || null; }
+        catch (err) { return null; }
+    }
+ 
+    function logout() {
+        sessionStorage.removeItem(SESSION_KEY);
+        window.location.href = 'login.html';
+    }
+ 
+    function escapeHTML(value) {
+        return String(value === undefined || value === null ? '' : value)
+            .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+ 
+    // fetch with the login token; logs out automatically if the token is rejected
+    async function api(path) {
+        var res = await fetch(API_ROOT + path, {
+            headers: { Authorization: 'Bearer ' + state.session.token }
+        });
+        if (res.status === 401 || res.status === 403) {
+            var body401 = await res.json().catch(function () { return {}; });
+            // 403 from authorize() = wrong role, not an expired token
+            if (res.status === 401 || /token/i.test(body401.message || '')) {
+                logout();
+            }
+            throw new Error(body401.message || 'Access denied');
+        }
+        var body = await res.json();
+        if (!res.ok || !body.success) {
+            throw new Error(body.message || 'Request failed');
+        }
+        return body.data;
+    }
+ 
+    function pageHeader(title, extraHTML) {
+        return '<div class="content-header"><h2>' + escapeHTML(title) + '</h2>' + (extraHTML || '') + '</div>';
+    }
+ 
+    /* -------------------------------------------------------------- sidebar */
+ 
+    function renderSidebar() {
+        var user = state.session.user || {};
+        var name = user.username || 'User';
+        var branch = user.branch && !/^ALL(-ACCESS)?$/i.test(user.branch) ? user.branch : 'All branches';
+ 
+        var items = state.menu.items.map(function (item) {
+            return (
+                '<a href="#' + escapeHTML(item.id) + '" class="menu-item" data-menu="' + escapeHTML(item.id) + '" title="' + escapeHTML(item.label) + '">' +
+                    '<span class="menu-icon" aria-hidden="true">' + escapeHTML(item.icon || '•') + '</span>' +
+                    '<span class="menu-label">' + escapeHTML(item.label) + '</span>' +
+                '</a>'
+            );
+        }).join('');
+ 
+        sidebarEl.innerHTML =
+            '<div class="profile">' +
+                '<div class="avatar" aria-hidden="true">' + escapeHTML(name.charAt(0).toUpperCase()) + '</div>' +
+                '<div class="profile-text">' +
+                    '<h2>' + escapeHTML(name) + '</h2>' +
+                    '<p>' + escapeHTML(state.menu.roleLabel) + ' · ' + escapeHTML(branch) + '</p>' +
+                '</div>' +
+            '</div>' +
+            '<nav class="sidebar-menu">' + items + '</nav>' +
+            '<div class="sidebar-footer">' +
+                '<button type="button" class="logout-button" id="logout-button">' +
+                    '<span class="menu-icon" aria-hidden="true">↪</span><span class="menu-label">Log out</span>' +
+                '</button>' +
+            '</div>';
+ 
+        document.getElementById('logout-button').addEventListener('click', logout);
+    }
+ 
+    function setActive(menuId) {
+        var links = sidebarEl.querySelectorAll('.menu-item');
+        links.forEach(function (link) {
+            var on = link.getAttribute('data-menu') === menuId;
+            link.classList.toggle('active', on);
+            if (on) {
+                link.setAttribute('aria-current', 'page');
+                // keep the active pill visible in the horizontal mobile menu
+                // (scroll only the menu strip, never the page)
+                var nav = link.parentNode;
+                if (nav.scrollWidth > nav.clientWidth) {
+                    nav.scrollLeft = link.offsetLeft - (nav.clientWidth - link.offsetWidth) / 2;
+                }
+            } else {
+                link.removeAttribute('aria-current');
+            }
+        });
+    }
+ 
+    /* -------------------------------------------------------------- routing */
+ 
+    // "#branch/B001" -> { id: 'branch', param: 'B001' }
+    function routeFromHash() {
+        var parts = window.location.hash.replace(/^#/, '').split('/');
+        var id = decodeURIComponent(parts[0] || '');
+        var known = state.menu.items.some(function (item) { return item.id === id; });
+        if (!known) return { id: state.menu.items[0].id, param: null };
+        return { id: id, param: parts[1] ? decodeURIComponent(parts[1]) : null };
+    }
+
+    async function loadPage(route) {
+        var menuId = route.id;
+        state.current = menuId;
+        state.route = window.location.hash;
+        setActive(menuId);
+ 
+        var item = state.menu.items.find(function (i) { return i.id === menuId; });
+        var title = item ? item.label : menuId;
+        document.title = title + ' — JAEWAEW SHOP';
+ 
+        mainEl.innerHTML = '<p class="loading">กำลังโหลดข้อมูล...</p>';
+ 
+        var render = PAGES[menuId] || renderComingSoon;
+        try {
+            await render(title, route.param);
+        } catch (err) {
+            // ignore results of a page the user has already left
+            if (state.current !== menuId) return;
+            mainEl.innerHTML = pageHeader(title) +
+                '<p class="error-message">ไม่สามารถโหลดข้อมูลได้: ' + escapeHTML(err.message) + '</p>';
+        }
+        mainEl.focus({ preventScroll: true });
+    }
+ 
+    /* ---------------------------------------------------------------- pages */
+ 
+    function renderComingSoon(title) {
+        mainEl.innerHTML = pageHeader(title) +
+            '<div class="empty-state"><p>หน้านี้กำลังอยู่ระหว่างการพัฒนา</p></div>';
+    }
+ 
+    async function renderBranchPage(title, branchId) {
+        if (branchId) return renderBranchDashboard(branchId);
+
+        mainEl.innerHTML = pageHeader(title,
+            '<input type="search" id="branch-search" class="search-input" placeholder="Search for branches..." aria-label="Search branches">') +
+            '<div class="table-scroll">' +
+                '<table class="data-table">' +
+                    '<thead><tr><th>ID</th><th>Branch name</th><th>Address</th><th>Action</th></tr></thead>' +
+                    '<tbody id="branch-table-body"><tr><td colspan="4" class="loading">กำลังโหลดข้อมูล...</td></tr></tbody>' +
+                '</table>' +
+            '</div>';
+ 
+        var tbody = document.getElementById('branch-table-body');
+        var search = document.getElementById('branch-search');
+        var heading = mainEl.querySelector('.content-header h2');
+        var timer = null;
+
+        function setCount(n) {
+            var chip = heading.querySelector('.count-chip') || heading.appendChild(document.createElement('span'));
+            chip.className = 'count-chip';
+            chip.textContent = n + (n === 1 ? ' branch' : ' branches');
+        }
+
+ 
+        async function load(keyword) {
+            var query = keyword ? '?search=' + encodeURIComponent(keyword) : '';
+            var branches = await api('/branches' + query);
+            if (state.current !== 'branch') return;
+            setCount(branches.length);
+ 
+            if (!branches.length) {
+                tbody.innerHTML = '<tr><td colspan="4" class="empty-row">ไม่พบสาขาที่ค้นหา</td></tr>';
+                return;
+            }
+            tbody.innerHTML = branches.map(function (b) {
+                return '<tr>' +
+                    '<td>' + escapeHTML(b.branch_id) + '</td>' +
+                    '<td>' + escapeHTML(b.branch_name) + '</td>' +
+                    '<td class="cell-muted">' + escapeHTML(b.address) + '</td>' +
+                    '<td><button type="button" class="table-button" data-view="' + escapeHTML(b.branch_id) + '">VIEW</button></td>' +
+                '</tr>';
+            }).join('');
+        }
+ 
+        search.addEventListener('input', function () {
+            clearTimeout(timer);
+            timer = setTimeout(function () {
+                load(search.value.trim()).catch(function (err) {
+                    tbody.innerHTML = '<tr><td colspan="4" class="error-message">' + escapeHTML(err.message) + '</td></tr>';
+                });
+            }, 250);
+        });
+ 
+        tbody.addEventListener('click', function (e) {
+            var button = e.target.closest('[data-view]');
+            if (!button) return;
+            window.location.hash = 'branch/' + encodeURIComponent(button.getAttribute('data-view'));
+        });
+ 
+        await load('');
+    }
+ 
+    // Branch dashboard shown after pressing VIEW: photo + address card, then panels
+    async function renderBranchDashboard(branchId) {
+        var route = state.route;
+        var b = await api('/branches/' + encodeURIComponent(branchId));
+        if (state.route !== route) return;
+
+        document.title = 'Branch - ' + b.branch_name + ' — JAEWAEW SHOP';
+        mainEl.innerHTML =
+            '<div class="content-header branch-header">' +
+                '<h2>Branch -&nbsp; ' + escapeHTML(b.branch_name) + '</h2>' +
+                '<a href="#branch" class="close-button" aria-label="Back to branch list">×</a>' +
+            '</div>' +
+            '<div class="branch-grid">' +
+                '<article class="branch-card branch-hero">' +
+                    '<img src="elements/branches/' + encodeURIComponent(b.branch_id) + '.jpg" alt="">' +
+                    '<div class="branch-hero-info">' +
+                        '<span class="branch-code">' + escapeHTML(b.branch_id) + '</span>' +
+                        '<p>' + escapeHTML(b.address || '-') + '</p>' +
+                    '</div>' +
+                '</article>' +
+                // reserved panels for this branch's stock / sales / requests
+                '<div class="branch-card placeholder" aria-hidden="true"></div>' +
+                '<div class="branch-card placeholder" aria-hidden="true"></div>' +
+                '<div class="branch-card placeholder" aria-hidden="true"></div>' +
+                '<div class="branch-card placeholder" aria-hidden="true"></div>' +
+                '<div class="branch-card placeholder" aria-hidden="true"></div>' +
+            '</div>';
+
+        // no photo for this branch yet -> fall back to the textured background
+        var img = mainEl.querySelector('.branch-hero img');
+        img.addEventListener('error', function () {
+            img.closest('.branch-hero').classList.add('no-photo');
+            img.remove();
+        });
+    }
+ 
+    // menu id -> page renderer. Items without an entry show "coming soon".
+    var PAGES = {
+        'branch': renderBranchPage
+    };
+ 
+    /* ----------------------------------------------------------------- init */
+ 
+    async function init() {
+        sidebarEl = document.getElementById('sidebar');
+        mainEl = document.getElementById('main-content');
+ 
+        state.session = loadSession();
+        if (!state.session || !state.session.token) {
+            logout();
+            return;
+        }
+ 
+        try {
+            state.menu = await api('/menu');
+        } catch (err) {
+            mainEl.innerHTML = '<p class="error-message">ไม่สามารถโหลดเมนูได้: ' + escapeHTML(err.message) + '</p>';
+            return;
+        }
+ 
+        renderSidebar();
+        window.addEventListener('hashchange', function () { loadPage(routeFromHash()); });
+        loadPage(routeFromHash());
+    }
+ 
+    document.addEventListener('DOMContentLoaded', init);
+})();
+ 

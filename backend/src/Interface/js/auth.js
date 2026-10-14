@@ -5,8 +5,8 @@
     // Pages are normally served by the Express app itself, so the API lives on the
     // same origin. When a page is opened straight from disk (file://) fall back to
     // the default backend port.
-    var isHttp = window.location.protocol === 'http:' || window.location.protocol === 'https:';
-    var API_BASE = (isHttp ? window.location.origin : 'http://localhost:5000') + '/api/auth';
+    // js/config.js decides where the backend is
+    var API_BASE = window.SA_API_ROOT + '/auth';
 
     var SESSION_KEY = 'sa_session';
 
@@ -127,7 +127,13 @@
         // Show what we already know straight away, then confirm against the server.
         renderUser(current.user);
 
-        // NOTE: .continue-button has no destination page yet, so it is left unwired.
+        var continueButton = document.querySelector('.continue-button');
+        if (continueButton) {
+            continueButton.addEventListener('click', function () {
+                window.location.href = 'branch-owner.html';
+            });
+        }
+
         var closeButton = document.querySelector('.close-button');
         if (closeButton) {
             closeButton.addEventListener('click', logout);

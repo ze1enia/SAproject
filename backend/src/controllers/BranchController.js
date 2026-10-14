@@ -1,8 +1,8 @@
-import { BranchService } from '../services/BranchService.js';
+const { BranchService } = require('../services/BranchService');
 
 const branchService = new BranchService();
 
-export class BranchController {
+class BranchController {
 
     // 1. ดึงรายการสาขาทั้งหมด หรือค้นหาผ่าน Query ?search=
     static async getBranches(req, res) {
@@ -143,3 +143,5 @@ export class BranchController {
         }
     }
 }
+
+module.exports = { BranchController };
