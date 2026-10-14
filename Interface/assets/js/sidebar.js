@@ -26,9 +26,15 @@
     }
  
     // fetch with the login token; logs out automatically if the token is rejected
-    async function api(path) {
+    // api('/x') = GET, api('/x', { method: 'POST', body: {...} }) for writes
+    async function api(path, options) {
+        options = options || {};
+        var headers = { Authorization: 'Bearer ' + state.session.token };
+        if (options.body !== undefined) headers['Content-Type'] = 'application/json';
         var res = await fetch(API_ROOT + path, {
-            headers: { Authorization: 'Bearer ' + state.session.token }
+            method: options.method || 'GET',
+            headers: headers,
+            body: options.body !== undefined ? JSON.stringify(options.body) : undefined
         });
         if (res.status === 401 || res.status === 403) {
             var body401 = await res.json().catch(function () { return {}; });
@@ -125,7 +131,7 @@
  
         mainEl.innerHTML = '<p class="loading">กำลังโหลดข้อมูล...</p>';
  
-        var render = PAGES[menuId] || renderComingSoon;
+        var render = PAGES[menuId] || SA.pages[menuId] || renderComingSoon;
         try {
             await render(title, route.param);
         } catch (err) {
@@ -150,7 +156,7 @@
         mainEl.innerHTML = pageHeader(title,
             '<input type="search" id="branch-search" class="search-input" placeholder="Search for branches..." aria-label="Search branches">') +
             '<div class="table-scroll">' +
-                '<table class="data-table">' +
+                '<table class="data-table branch-table">' +
                     '<thead><tr><th>ID</th><th>Branch name</th><th>Address</th><th>Action</th></tr></thead>' +
                     '<tbody id="branch-table-body"><tr><td colspan="4" class="loading">กำลังโหลดข้อมูล...</td></tr></tbody>' +
                 '</table>' +
@@ -382,6 +388,46 @@
     // menu id -> page renderer. Items without an entry show "coming soon".
     var PAGES = {
         'branch': renderBranchPage
+    };
+
+    /* ------------------------------------------------- shared with pages/*.js */
+
+    // Each Owner page lives in assets/js/pages/<name>.js and registers itself with
+    // SA.pages['<menu id>'] = function (title, param) { ... }
+    var branchCache = null;
+    var SA = window.SA = {
+        pages: {},
+        api: api,
+        escapeHTML: escapeHTML,
+        pageHeader: pageHeader,
+        state: state,
+        main: function () { return mainEl; },
+        // hash of the page being shown - pages compare it to drop results that arrive after the user left
+        route: function () { return state.route; },
+        user: function () { return (state.session && state.session.user) || {}; },
+
+        // branches.csv ids are B001, every other table uses BR001 -> compare by number
+        branchNumber: function (id) {
+            var m = String(id || '').match(/(\d+)\s*$/);
+            return m ? Number(m[1]) : null;
+        },
+        branches: function () {
+            if (!branchCache) branchCache = api('/branches').catch(function (err) { branchCache = null; throw err; });
+            return branchCache;
+        },
+        branchName: function (list, id) {
+            var n = SA.branchNumber(id);
+            var hit = list.filter(function (b) { return SA.branchNumber(b.branch_id) === n; })[0];
+            return hit ? hit.branch_name : id;
+        },
+        // <option> list for a branch <select>; allLabel adds a leading "all branches" entry
+        branchOptions: function (list, selected, allLabel) {
+            return (allLabel ? '<option value="">' + escapeHTML(allLabel) + '</option>' : '') +
+                list.map(function (b) {
+                    return '<option value="' + escapeHTML(b.branch_id) + '"' + (b.branch_id === selected ? ' selected' : '') + '>' +
+                        escapeHTML(b.branch_id + ' · ' + b.branch_name) + '</option>';
+                }).join('');
+        }
     };
  
     /* ----------------------------------------------------------------- init */

@@ -7,18 +7,25 @@ const stockRequestController = require("../controllers/stockRequestController");
 const authenticate = require("../middlewares/authMiddleware");
 const authorize = require("../middlewares/authorize");
 
-// ต้อง Login และมีสิทธิ์เป็น Shop Owner
+// ต้อง Login และมีสิทธิ์เป็น Owner (role_id ในตาราง users คือ "Owner")
 router.get(
   "/products",
   authenticate,
-  authorize("Shop Owner"),
+  authorize("Owner"),
   stockRequestController.getProductsForStockRequest
+);
+
+router.get(
+  "/",
+  authenticate,
+  authorize("Owner"),
+  stockRequestController.getStockRequests
 );
 
 router.post(
   "/",
   authenticate,
-  authorize("Shop Owner"),
+  authorize("Owner"),
   stockRequestController.createStockRequest
 );
 
