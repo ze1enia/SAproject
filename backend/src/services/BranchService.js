@@ -1,37 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const { BranchModel } = require('../models/BranchModel');
-
-// แยก 1 บรรทัด CSV ออกเป็นคอลัมน์ (รองรับค่าที่ครอบด้วย "..." และมี , อยู่ข้างใน)
-function parseCSVLine(line) {
-    const values = [];
-    let current = '';
-    let inQuotes = false;
-
-    for (let i = 0; i < line.length; i++) {
-        const ch = line[i];
-        if (inQuotes) {
-            if (ch === '"' && line[i + 1] === '"') { current += '"'; i++; }
-            else if (ch === '"') inQuotes = false;
-            else current += ch;
-        } else if (ch === '"') {
-            inQuotes = true;
-        } else if (ch === ',') {
-            values.push(current.trim());
-            current = '';
-        } else {
-            current += ch;
-        }
-    }
-    values.push(current.trim());
-    return values;
-}
-
-// ครอบค่าด้วย "..." เมื่อมี , หรือ " อยู่ข้างใน
-function toCSVValue(value) {
-    const text = value === undefined || value === null ? '' : String(value);
-    return /[",\n]/.test(text) ? '"' + text.replace(/"/g, '""') + '"' : text;
-}
+const { parseCSVLine, toCSVValue } = require('../utils/csv');
 
 class BranchService {
     constructor() {

@@ -226,12 +226,11 @@
                         '<p>' + escapeHTML(b.address || '-') + '</p>' +
                     '</div>' +
                 '</article>' +
-                // reserved panels for this branch's stock / sales / requests
-                '<div class="branch-card placeholder" aria-hidden="true"></div>' +
-                '<div class="branch-card placeholder" aria-hidden="true"></div>' +
-                '<div class="branch-card placeholder" aria-hidden="true"></div>' +
-                '<div class="branch-card placeholder" aria-hidden="true"></div>' +
-                '<div class="branch-card placeholder" aria-hidden="true"></div>' +
+                metricCard('low-stock', 'Low stock', 'สินค้าใกล้หมด') +
+                metricCard('fifo', 'FIFO batches', 'ล็อตที่ต้องใช้ก่อน') +
+                metricCard('requests', 'Pending requests', 'คำขอเบิกรออนุมัติ') +
+                metricCard('arrivals', 'Pending arrivals', 'สินค้ารอรับเข้า') +
+                metricCard('inspections', 'Pending inspections', 'รอตรวจรับคุณภาพ') +
             '</div>';
 
         // no photo for this branch yet -> fall back to the textured background
@@ -240,6 +239,144 @@
             img.closest('.branch-hero').classList.add('no-photo');
             img.remove();
         });
+
+        try {
+            var summary = await api('/branches/' + encodeURIComponent(branchId) + '/summary');
+            if (state.route !== route) return;
+            renderSummary(summary);
+        } catch (err) {
+            if (state.route !== route) return;
+            mainEl.querySelectorAll('.metric-body').forEach(function (body) {
+                body.innerHTML = '<p class="error-message">' + escapeHTML(err.message) + '</p>';
+            });
+        }
+    }
+
+    /* ------------------------------------------------------- summary cards */
+
+    var MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    var REQUEST_STATUSES = ['Pending', 'Approved', 'Rejected', 'Cancelled'];
+
+    function metricCard(key, title, subtitle) {
+        return '<article class="branch-card metric-card" data-metric="' + key + '">' +
+            '<header class="metric-head">' +
+                '<div><h3>' + escapeHTML(title) + '</h3><p>' + escapeHTML(subtitle) + '</p></div>' +
+                '<strong class="metric-value">–</strong>' +
+            '</header>' +
+            '<div class="metric-body"><p class="loading">กำลังโหลด...</p></div>' +
+        '</article>';
+    }
+
+    function fillCard(key, value, bodyHTML) {
+        var card = mainEl.querySelector('[data-metric="' + key + '"]');
+        if (!card) return;
+        card.querySelector('.metric-value').textContent = value;
+        card.querySelector('.metric-body').innerHTML = bodyHTML;
+        card.classList.toggle('is-clear', value === 0);
+    }
+
+    function emptyNote(text) {
+        return '<p class="metric-empty"><span aria-hidden="true">✓</span> ' + escapeHTML(text) + '</p>';
+    }
+
+    // horizontal bars: rows of { label, value, tip, accent }
+    function barList(rows, max) {
+        return '<ul class="bar-list">' + rows.map(function (r) {
+            var pct = max > 0 && r.value > 0 ? Math.max(2, (r.value / max) * 100) : 0;
+            return '<li data-tip="' + escapeHTML(r.tip) + '">' +
+                '<span class="bar-label">' + escapeHTML(r.label) + '</span>' +
+                '<span class="bar-track"><span class="bar' + (r.accent ? ' accent' : '') + '" style="width:' + pct + '%"></span></span>' +
+                '<span class="bar-value">' + r.value + '</span>' +
+            '</li>';
+        }).join('') + '</ul>';
+    }
+
+    // vertical columns: { label, value, tip, accent }
+    function columnChart(cols) {
+        var max = Math.max.apply(null, cols.map(function (c) { return c.value; }).concat(1));
+        return '<div class="column-chart" role="img" aria-label="' +
+                escapeHTML(cols.map(function (c) { return c.label + ': ' + c.value; }).join(', ')) + '">' +
+            cols.map(function (c) {
+                return '<div class="column" data-tip="' + escapeHTML(c.tip) + '">' +
+                    '<span class="column-value">' + c.value + '</span>' +
+                    '<span class="column-bar' + (c.accent ? ' accent' : '') + '" style="height:' + Math.max(3, (c.value / max) * 100) + '%"></span>' +
+                    '<span class="column-label">' + escapeHTML(c.label) + '</span>' +
+                '</div>';
+            }).join('') +
+        '</div>';
+    }
+
+    function arrivalList(items) {
+        return '<ul class="metric-list">' + items.map(function (a) {
+            return '<li><strong>' + escapeHTML(a.arrival_id) + '</strong>' +
+                '<span>' + escapeHTML(a.purchase_order_id) + ' · ' + escapeHTML(String(a.arrival_date || '').split(' ')[0]) + '</span></li>';
+        }).join('') + '</ul>';
+    }
+
+    function renderSummary(s) {
+        // 1. low stock: lowest items first, scale = threshold
+        var low = s.lowStock;
+        var shown = low.items.slice(0, 5);
+        fillCard('low-stock', low.count, low.count
+            ? barList(shown.map(function (i) {
+                return { label: i.product_name, value: i.quantity, accent: true,
+                         tip: i.product_name + ' (' + i.product_id + '): ' + i.quantity + ' left' };
+              }), low.threshold) +
+              (low.count > shown.length ? '<p class="metric-more">+' + (low.count - shown.length) + ' more</p>' : '')
+            : emptyNote('ทุกสินค้ามีมากกว่า ' + low.threshold + ' ชิ้น'));
+
+        // 2. FIFO: batches per expiry month; this & next month are highlighted
+        var now = new Date();
+        var soon = now.getFullYear() * 12 + now.getMonth() + 1;
+        var fifo = s.fifoBatches;
+        fillCard('fifo', fifo.count, fifo.count
+            ? columnChart(fifo.byExpiryMonth.map(function (m) {
+                if (m.month === 'none') {
+                    return { label: 'None', value: m.count, tip: m.count + ' batches with no expiry date' };
+                }
+                var y = Number(m.month.slice(0, 4)), mo = Number(m.month.slice(5)) - 1;
+                var name = MONTHS[mo] + ' ' + String(y).slice(2);
+                return { label: name, value: m.count, accent: y * 12 + mo <= soon,
+                         tip: m.count + ' batches expire in ' + MONTHS[mo] + ' ' + y };
+              })) + (fifo.nextExpiry ? '<p class="metric-more">Next expiry ' + escapeHTML(fifo.nextExpiry) + '</p>' : '')
+            : emptyNote('ไม่มีล็อตคงเหลือ'));
+
+        // 3. requests: every status as context, Pending highlighted
+        var req = s.pendingRequests;
+        var statuses = REQUEST_STATUSES.concat(Object.keys(req.byStatus).filter(function (k) {
+            return REQUEST_STATUSES.indexOf(k) === -1;
+        }));
+        fillCard('requests', req.count, req.total
+            ? barList(statuses.map(function (st) {
+                var n = req.byStatus[st] || 0;
+                return { label: st, value: n, accent: st === 'Pending', tip: n + ' ' + st.toLowerCase() + ' of ' + req.total + ' requests' };
+              }), Math.max.apply(null, statuses.map(function (st) { return req.byStatus[st] || 0; })))
+            : emptyNote('ยังไม่มีคำขอเบิก'));
+
+        // 4-5. tiny counts -> number + list
+        fillCard('arrivals', s.pendingArrivals.count, s.pendingArrivals.count
+            ? arrivalList(s.pendingArrivals.items) : emptyNote('ไม่มีรอบที่ส่งไม่ครบ'));
+        fillCard('inspections', s.pendingInspections.count, s.pendingInspections.count
+            ? arrivalList(s.pendingInspections.items) : emptyNote('ตรวจรับครบทุกรอบแล้ว'));
+    }
+
+    // one shared tooltip for every [data-tip] mark
+    function initTooltip() {
+        var tip = document.createElement('div');
+        tip.className = 'chart-tip';
+        tip.setAttribute('role', 'tooltip');
+        document.body.appendChild(tip);
+
+        mainEl.addEventListener('mousemove', function (e) {
+            var mark = e.target.closest('[data-tip]');
+            if (!mark) { tip.classList.remove('show'); return; }
+            tip.textContent = mark.getAttribute('data-tip');
+            tip.classList.add('show');
+            var x = Math.min(e.clientX + 14, window.innerWidth - tip.offsetWidth - 8);
+            var y = e.clientY - tip.offsetHeight - 12;
+            tip.style.transform = 'translate(' + x + 'px,' + (y < 8 ? e.clientY + 18 : y) + 'px)';
+        });
+        mainEl.addEventListener('mouseleave', function () { tip.classList.remove('show'); });
     }
  
     // menu id -> page renderer. Items without an entry show "coming soon".
@@ -267,6 +404,7 @@
         }
  
         renderSidebar();
+        initTooltip();
         window.addEventListener('hashchange', function () { loadPage(routeFromHash()); });
         loadPage(routeFromHash());
     }

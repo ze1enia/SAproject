@@ -292,6 +292,137 @@ button, input { font: inherit; }
   color: var(--rust);
 }
 
+/* --------------------------------------------------------- metric cards */
+
+.metric-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 0;
+  padding: 16px 20px 14px;
+  background: #f6f2ee;
+  border: 1px solid var(--line);
+}
+.metric-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+.metric-head h3 { margin: 0; font-size: 16px; font-weight: 700; color: #111; }
+.metric-head p { margin: 2px 0 0; font-size: 13px; color: #5f534b; }
+.metric-value {
+  font-size: 38px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--rust);
+}
+.metric-card.is-clear .metric-value { color: #9a8c80; }
+.metric-body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+.metric-body .loading { margin: auto 0; font-size: 13px; }
+.metric-empty { margin: auto 0; color: var(--text-muted); font-size: 14px; }
+.metric-empty span { color: #4f7a3a; font-weight: 700; }
+.metric-more { margin: 6px 0 0; font-size: 12px; color: var(--text-muted); }
+
+/* horizontal bars */
+.bar-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.bar-list li {
+  display: grid;
+  grid-template-columns: minmax(70px, 40%) minmax(0, 1fr) 28px;
+  align-items: center;
+  gap: 10px;
+  padding: 2px 0;
+  font-size: 13px;
+  cursor: default;
+}
+.bar-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text); }
+.bar-track { height: 14px; border-radius: 0 4px 4px 0; background: #ebe2d9; }
+.bar {
+  display: block;
+  height: 100%;
+  border-radius: 0 4px 4px 0;
+  background: #cbb8a6;
+  transition: filter .15s;
+}
+.bar.accent { background: var(--rust); }
+.bar-value { text-align: right; font-weight: 700; font-variant-numeric: tabular-nums; }
+.bar-list li:hover .bar { filter: brightness(.88); }
+.bar-list li:hover .bar-label { font-weight: 700; }
+
+/* vertical columns */
+.column-chart {
+  flex: 1;
+  min-height: 90px;
+  display: flex;
+  align-items: stretch;
+  gap: 6px;
+  border-bottom: 1px solid #cdbfb2;
+}
+.column {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  position: relative;
+  padding-bottom: 18px;
+  cursor: default;
+}
+.column-bar {
+  width: min(24px, 100%);
+  border-radius: 4px 4px 0 0;
+  background: #cbb8a6;
+  transition: filter .15s;
+}
+.column-bar.accent { background: var(--rust); }
+.column-value { font-size: 12px; font-weight: 700; margin-bottom: 3px; }
+.column-label {
+  position: absolute;
+  bottom: 0;
+  font-size: 11px;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+.column:hover .column-bar { filter: brightness(.88); }
+
+/* small lists for arrivals / inspections */
+.metric-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.metric-list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: #fff;
+  font-size: 13px;
+}
+.metric-list span { color: var(--text-muted); }
+
+.chart-tip {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 10;
+  max-width: 260px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: #2a211c;
+  color: #fff;
+  font-size: 12px;
+  line-height: 1.4;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .12s;
+}
+.chart-tip.show { opacity: 1; }
+
 /* -------------------------------------------------------------- tablet */
 
 @media (max-width: 1000px) {
@@ -302,6 +433,7 @@ button, input { font: inherit; }
   .main-content { padding: 26px 24px; }
   .content-header h2 { font-size: 28px; }
   .branch-grid { gap: 16px; }
+  .metric-value { font-size: 32px; }
 }
 
 /* -------------------------------------------------------------- mobile */
@@ -332,7 +464,8 @@ button, input { font: inherit; }
   .data-table { font-size: 13px; }
   .data-table th, .data-table td { padding: 9px 10px; }
   .data-table th:nth-child(3), .data-table td:nth-child(3) { display: none; }
-  .branch-grid { grid-template-columns: 1fr; grid-template-rows: 240px; grid-auto-rows: 140px; height: auto; }
+  .branch-grid { grid-template-columns: 1fr; grid-template-rows: 240px; grid-auto-rows: auto; height: auto; }
+  .metric-card { min-height: 150px; }
   .branch-hero-info { margin-bottom: 24px; padding: 12px 16px; }
   .branch-hero-info p { font-size: 15px; }
 }

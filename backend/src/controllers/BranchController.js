@@ -1,6 +1,8 @@
 const { BranchService } = require('../services/BranchService');
+const { BranchSummaryService } = require('../services/BranchSummaryService');
 
 const branchService = new BranchService();
+const summaryService = new BranchSummaryService();
 
 class BranchController {
 
@@ -51,6 +53,32 @@ class BranchController {
             return res.status(500).json({
                 success: false,
                 message: 'เกิดข้อผิดพลาดในการดึงข้อมูลสาขา',
+                error: error.message
+            });
+        }
+    }
+
+    // 2.1 ตัวเลขสรุปของสาขา (หน้า Branch dashboard)
+    static async getBranchSummary(req, res) {
+        try {
+            const { id } = req.params;
+            const branch = await branchService.getBranchById(id);
+
+            if (!branch) {
+                return res.status(404).json({
+                    success: false,
+                    message: `ไม่พบข้อมูลสาขารหัส ${id}`
+                });
+            }
+
+            return res.status(200).json({
+                success: true,
+                data: summaryService.getSummary(branch.branch_id)
+            });
+        } catch (error) {
+            return res.status(500).json({
+                success: false,
+                message: 'ไม่สามารถดึงข้อมูลสรุปของสาขาได้',
                 error: error.message
             });
         }

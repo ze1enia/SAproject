@@ -11,6 +11,9 @@ router.get('/', authenticate, BranchController.getBranches);
 // ดึงข้อมูลเฉพาะสาขา (เมื่อกด VIEW)
 router.get('/:id', authenticate, BranchController.getBranchById);
 
+// ตัวเลขสรุป (สินค้าใกล้หมด, ล็อต FIFO, คำขอ/การจัดส่ง/ตรวจรับที่ค้างอยู่)
+router.get('/:id/summary', authenticate, BranchController.getBranchSummary);
+
 // สร้างสาขาใหม่
 router.post('/', authenticate, authorize('Owner'), BranchController.createBranch);
 
