@@ -11,8 +11,12 @@
 -- Undo with staff_test_cleanup.sql
 --
 -- Accounts (passwords are in the SA table: SELECT username, password_ori FROM SA)
---   USR002  Kittipong  Staff  -> B001 BKK + B002 Samut Prakan   (branch dropdown)
---   USR003  Pimchanok  Staff  -> B002 Samut Prakan only          (fixed branch chip)
+-- The rows below are ADDED to each account's own branch, so the Staff pages show a
+-- branch dropdown for both:
+--   USR002  Kittipong  Staff  -> B001 BKK + B002 Samut Prakan + own B016
+--   USR003  Pimchanok  Staff  -> B002 Samut Prakan + own B003
+-- A Staff account with a single branch (e.g. USR004 Thanakorn -> B004) shows a fixed
+-- branch chip instead of a dropdown, and empty states because B004 has no data.
 --
 -- Walk-through (log in as the Staff account, then use the sidebar):
 --

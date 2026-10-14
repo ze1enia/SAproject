@@ -72,10 +72,13 @@
 
             var p = state.plan, s = p.summary;
             panel.innerHTML = '<div class="panel"><h3>FIFO plan · ' + esc(p.request_id) + '</h3>' +
-                '<div class="table-scroll"><table class="data-table"><thead><tr><th>Product</th><th class="num">Requested</th><th>Pick from</th></tr></thead><tbody>' +
+                '<div class="table-scroll"><table class="data-table"><thead><tr><th>Product · pick from batch</th><th class="num">Requested</th></tr></thead><tbody>' +
                 p.items.map(function (i) {
-                    return '<tr><td>' + esc(i.product_name) + '<span class="sub">' + esc(i.product_id) + '</span></td><td class="num"><b>' + i.requested + '</b> ' + esc(i.unit) + '</td>' +
-                        '<td>' + (i.allocations.length ? allocChips(i.allocations) : '') + (i.shortage ? '<div style="margin-top:4px">' + UI.badge(i.picked ? 'warn' : 'bad', (i.picked ? 'Short ' : 'No stock · short ') + i.shortage) + '</div>' : '') + '</td></tr>';
+                    // batches go under the product name so the plan fits the narrow side panel
+                    return '<tr><td>' + esc(i.product_name) + '<span class="sub">' + esc(i.product_id) + '</span>' +
+                        (i.allocations.length ? allocChips(i.allocations) : '') +
+                        (i.shortage ? '<div style="margin-top:6px">' + UI.badge(i.picked ? 'warn' : 'bad', (i.picked ? 'Short ' : 'No stock · short ') + i.shortage) + '</div>' : '') + '</td>' +
+                        '<td class="num"><b>' + i.requested + '</b> ' + esc(i.unit) + '</td></tr>';
                 }).join('') + '</tbody></table></div>' +
                 '<p class="table-note"><b>' + UI.int(s.units) + '</b> units from ' + s.items + ' items' + (s.short_items ? ' · <b style="color:var(--bad-fg)">' + s.short_items + ' item(s) short of stock — only the available quantity will be picked</b>' : '') + '</p>' +
                 '<div class="toolbar" style="margin:14px 0 0"><button type="button" class="btn btn-primary" id="ff-confirm"' + (s.units ? '' : ' disabled') + '>ยืนยันการจัดเตรียมสินค้า</button></div></div>';
