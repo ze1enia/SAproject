@@ -13,7 +13,7 @@ app.use(express.json());
 
 //UI pages (frontend/) served from the same origin as the API
 app.use(express.static(path.join(__dirname, '..', '..', 'frontend')));
-app.get('/', (req, res) => res.redirect('/login.html'));
+app.get('/', (req, res) => res.redirect('/pages/login.html'));
 
 //API Route
 app.use('/api/auth', authRoutes);

@@ -220,7 +220,7 @@
             '</div>' +
             '<div class="branch-grid">' +
                 '<article class="branch-card branch-hero">' +
-                    '<img src="elements/branches/' + encodeURIComponent(b.branch_id) + '.jpg" alt="">' +
+                    '<img src="../assets/images/branches/' + encodeURIComponent(b.branch_id) + '.jpg" alt="">' +
                     '<div class="branch-hero-info">' +
                         '<span class="branch-code">' + escapeHTML(b.branch_id) + '</span>' +
                         '<p>' + escapeHTML(b.address || '-') + '</p>' +
