@@ -36,7 +36,8 @@
 }
 .select { padding-right: 30px; cursor: pointer; }
 .input, .textarea { width: 100%; border-radius: 12px; background: #fff; border-color: #cdbfb2; }
-.textarea { min-height: 96px; resize: vertical; line-height: 1.45; }
+.textarea { min-height: 96px; resize: vertical; line-height: 1.45; font-family: inherit; }
+.input, .select, .search-input { font-family: inherit; }
 .select:focus, .input:focus, .textarea:focus { outline: none; border-color: var(--caramel); box-shadow: 0 0 0 3px rgb(185 138 82 / 25%); }
 .input[aria-invalid="true"], .textarea[aria-invalid="true"], .select[aria-invalid="true"] { border-color: var(--danger); }
 
@@ -568,3 +569,94 @@ body.modal-open { overflow: hidden; }
 .budget-card > span[data-tip] { display: block; }
 .badge-income { background: var(--info-bg); color: var(--info-fg); }
 .badge-expense { background: #f6e1d6; color: #7a3414; }
+
+/* ------------------------------------------------------------ Staff pages */
+
+.branch-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 38px;
+  padding: 8px 16px;
+  border-radius: 20px;
+  background: var(--caramel-soft);
+  color: var(--coffee);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+/* "how to change the number" cards in Manage Stock */
+.mode-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.mode-card { position: relative; }
+.mode-card input { position: absolute; opacity: 0; inset: 0; cursor: pointer; }
+.mode-card span {
+  display: block;
+  padding: 10px 14px;
+  border: 1.5px solid #cdbfb2;
+  border-radius: 14px;
+  background: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--coffee);
+}
+.mode-card span small { display: block; margin-top: 2px; font-size: 12px; font-weight: normal; color: var(--text-muted); }
+.mode-card input:checked + span { border-color: var(--rust); background: var(--caramel-soft); box-shadow: 0 0 0 3px rgb(166 83 43 / 15%); }
+.mode-card input:focus-visible + span { outline: 2px solid var(--caramel); outline-offset: 2px; }
+
+.change-preview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 12px;
+  border-radius: 14px;
+  background: var(--muted-bg);
+  font-size: 22px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.change-preview small { display: block; font-size: 11px; font-weight: normal; color: var(--text-muted); text-align: center; }
+.change-preview .arrow { color: var(--text-muted); }
+.change-preview .delta-up { color: var(--income); }
+.change-preview .delta-down { color: var(--expense); }
+
+/* FIFO batch chips + pick sheet */
+.alloc-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+.alloc-chip { padding: 3px 10px; border-radius: 12px; background: var(--caramel-soft); color: var(--coffee); font-size: 12px; font-weight: 700; white-space: nowrap; }
+.alloc-chip small { font-weight: normal; color: var(--text-muted); margin-left: 4px; }
+.pick-sheet { padding: 22px 24px; border: 2px solid #2a211c; border-radius: 6px; background: #fffdf6; }
+.pick-sheet h3 { margin: 0 0 2px; font-size: 20px; }
+.pick-sheet .pick-meta { margin: 0 0 14px; font-size: 13px; color: var(--text-muted); }
+
+/* purchase order form rows */
+.item-rows { display: grid; gap: 10px; }
+.item-row { display: grid; grid-template-columns: minmax(0, 1fr) 90px 110px 34px; gap: 8px; align-items: center; }
+.item-row .input, .item-row .select { min-height: 38px; }
+.item-row .icon-btn { width: 34px; height: 34px; border: 0; border-radius: 50%; background: var(--muted-bg); color: var(--coffee); font-size: 18px; cursor: pointer; }
+.item-row .icon-btn:hover { background: var(--bad-bg); color: var(--bad-fg); }
+.item-head { display: grid; grid-template-columns: minmax(0, 1fr) 90px 110px 34px; gap: 8px; font-size: 12px; font-weight: 700; color: var(--muted-fg); }
+.total-line { display: flex; justify-content: space-between; align-items: baseline; margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--line); font-size: 14px; }
+.total-line b { font-size: 22px; font-variant-numeric: tabular-nums; }
+
+.receive-table input.input { min-height: 34px; padding: 4px 10px; border-radius: 10px; text-align: right; }
+.receive-table input[type=date].input { text-align: left; }
+.receive-table td { vertical-align: middle; }
+
+.po-card { border: 1px solid var(--line); border-radius: 16px; background: #fff; padding: 16px 18px; }
+.po-card + .po-card { margin-top: 12px; }
+.po-card-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px 14px; margin-bottom: 10px; }
+.po-card-head h3 { margin: 0; font-size: 17px; }
+
+.check-cell { width: 36px; text-align: center; }
+.check-cell input { width: 18px; height: 18px; accent-color: var(--rust); cursor: pointer; }
+.data-table tbody tr.is-checked { background: #fdf6ea; }
+
+@media print {
+  body * { visibility: hidden !important; }
+  .pick-sheet, .pick-sheet * { visibility: visible !important; }
+  .pick-sheet { position: absolute; inset: 0 auto auto 0; width: 100%; border: 0; }
+}
+
+@media (max-width: 700px) {
+  .mode-grid { grid-template-columns: 1fr; }
+  .item-row, .item-head { grid-template-columns: minmax(0, 1fr) 70px 90px 34px; }
+}

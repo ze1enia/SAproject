@@ -179,6 +179,35 @@ class ProductService {
         return rows.map(r => ({ ...r, old_price: num(r.old_price), new_price: num(r.new_price) }));
     }
 
+    // ---- Staff: product status + read-only detail ---------------------------------
+    async setStatus(ids, status) {
+        const value = String(status || '').toLowerCase();
+        if (!['active', 'inactive'].includes(value)) throw new ApiError(400, 'โปรดเลือกสถานะสินค้าที่ต้องการอัปเดต');
+        if (!Array.isArray(ids) || !ids.length) throw new ApiError(400, 'โปรดเลือกสินค้าอย่างน้อย 1 รายการ');
+        const unique = [...new Set(ids.map(String))];
+        const [found] = await pool.query('SELECT product_id FROM products WHERE product_id IN (?)', [unique]);
+        if (found.length !== unique.length) throw new ApiError(404, 'พบรหัสสินค้าที่ไม่มีอยู่ในระบบ');
+        await pool.query('UPDATE products SET product_status = ? WHERE product_id IN (?)', [value, unique]);
+        return { updated: unique.length, status: value };
+    }
+
+    // product + stock and batches of one branch + price history (Product Info drawer)
+    async detail(id, dataBranch) {
+        const product = await this.getProduct(id);
+        if (!product) throw new ApiError(404, `ไม่พบสินค้ารหัส ${id}`);
+        const [stock] = await pool.query('SELECT quantity_on_hand, quantity_reserved, updated_at FROM branch_stocks WHERE branch_id = ? AND product_id = ?', [dataBranch, id]);
+        const [batches] = await pool.query(
+            `SELECT batch_id, received_at, expiry_date, quantity_received, quantity_remaining FROM stock_batches
+             WHERE branch_id = ? AND product_id = ? ORDER BY CAST(SUBSTRING(batch_id, 4) AS UNSIGNED)`, [dataBranch, id]
+        );
+        return {
+            product,
+            stock: stock[0] ? { on_hand: num(stock[0].quantity_on_hand), reserved: num(stock[0].quantity_reserved), updated_at: stock[0].updated_at } : null,
+            batches: batches.map((b) => ({ ...b, quantity_received: num(b.quantity_received), quantity_remaining: num(b.quantity_remaining) })),
+            price_history: await this.priceHistory({ productId: id, limit: 5 })
+        };
+    }
+
     async assertCategory(categoryId) {
         const [rows] = await pool.query('SELECT 1 FROM categories WHERE category_id = ? LIMIT 1', [categoryId]);
         if (!rows.length) throw new ApiError(400, 'ไม่พบหมวดหมู่ที่เลือก');
