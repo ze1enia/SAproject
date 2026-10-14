@@ -11,8 +11,8 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-//Interface (login / welcome pages) served from the same origin as the API
-app.use(express.static(path.join(__dirname, 'Interface')));
+//UI pages (frontend/) served from the same origin as the API
+app.use(express.static(path.join(__dirname, '..', '..', 'frontend')));
 app.get('/', (req, res) => res.redirect('/login.html'));
 
 //API Route
