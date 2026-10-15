@@ -60,7 +60,9 @@
     function renderSidebar() {
         var user = state.session.user || {};
         var name = user.username || 'User';
-        var branch = user.branch && !/^ALL(-ACCESS)?$/i.test(user.branch) ? user.branch : 'All branches';
+        // the Owner works across every branch; Staff show the branch they belong to (users.branch_id)
+        var branch = String(user.role).toLowerCase() === 'owner' || !user.branch || /^ALL(-ACCESS)?$/i.test(user.branch)
+            ? 'All branches' : user.branch;
  
         var items = state.menu.items.map(function (item) {
             return (
@@ -406,7 +408,7 @@
         route: function () { return state.route; },
         user: function () { return (state.session && state.session.user) || {}; },
 
-        // branches.csv ids are B001, every other table uses BR001 -> compare by number
+        // branch ids look like B001 (compared by number so "B1" and "B001" match)
         branchNumber: function (id) {
             var m = String(id || '').match(/(\d+)\s*$/);
             return m ? Number(m[1]) : null;

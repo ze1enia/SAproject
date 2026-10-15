@@ -1,6 +1,6 @@
 
 const pool = require("../config/db");
-// ปรับให้ใช้กับ schema ปัจจุบัน: รหัสเป็นข้อความ (PRD001 / REQ0001) และ branch_id ใน data เป็น BR001
+// ปรับให้ใช้กับ schema ปัจจุบัน: รหัสเป็นข้อความ (PRD001 / REQ0001) และ branch_id เป็น B001 ทุกตาราง
 const { toDataBranchId, nextId } = require("../utils/apiHelpers");
 
 // GET: แสดงรายการสินค้าที่สามารถส่งคำขอ Stock ได้

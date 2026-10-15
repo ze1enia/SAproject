@@ -5,7 +5,7 @@ const LOW_STOCK_THRESHOLD = 15;
 
 // ตัวเลขสรุปของหน้า Branch dashboard - อ่านจาก MySQL เสมอ จึงเห็นผลของการอนุมัติคำขอ /
 // รับสินค้า / ปรับสต็อกที่ทำผ่านหน้าอื่นทันที
-// (รหัสสาขาในตาราง stock/order ใช้ BR001 ส่วน branches ใช้ B001 -> toDataBranchId แปลงให้)
+// (ทุกตารางใช้รหัสสาขารูปแบบเดียวกัน คือ B001 - toDataBranchId แค่ปรับรูปแบบของค่าที่รับเข้ามา)
 class BranchSummaryService {
     async getSummary(branchId) {
         const dataBranch = toDataBranchId(branchId);

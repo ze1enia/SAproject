@@ -28,11 +28,12 @@ const handle = (fn) => async (req, res) => {
 const created = (data, message) => ({ __response: true, status: 201, data, message });
 const ok = (data, message) => ({ __response: true, status: 200, data, message });
 
-// branches.csv uses B001, every other table uses BR001 -> compare by the number
+// Every table uses the same branch id (B001). This only normalizes the input ("B1", " b001 ")
+// to that form and returns null when it is not a branch id.
 const toDataBranchId = (id) => {
     if (!id || id === 'all') return null;
-    const match = String(id).match(/(\d+)\s*$/);
-    return match ? 'BR' + String(Number(match[1])).padStart(3, '0') : null;
+    const match = String(id).trim().match(/^BR?(\d+)$/i);
+    return match ? 'B' + String(Number(match[1])).padStart(3, '0') : null;
 };
 
 // next "PRD061" style id for a TEXT primary key column
@@ -63,7 +64,7 @@ const parseThaiDate = (text) => {
 };
 
 // Staff only work with the branches listed in user_branch_access (ids like B003).
-// dataBranchId is the BR### form used by the stock / order tables.
+// dataBranchId is the normalized B### form (see toDataBranchId).
 async function assertBranchAccess(db, userId, dataBranchId) {
     const [rows] = await db.query('SELECT branch_id FROM user_branch_access WHERE user_id = ?', [userId]);
     if (!dataBranchId || !rows.some((r) => toDataBranchId(r.branch_id) === dataBranchId)) {
