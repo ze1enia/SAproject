@@ -73,7 +73,7 @@ class BranchController {
 
             return res.status(200).json({
                 success: true,
-                data: summaryService.getSummary(branch.branch_id)
+                data: await summaryService.getSummary(branch.branch_id)
             });
         } catch (error) {
             return res.status(500).json({

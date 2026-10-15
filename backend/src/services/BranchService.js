@@ -1,125 +1,76 @@
-const fs = require('fs');
-const path = require('path');
+const pool = require('../config/db');
 const { BranchModel } = require('../models/BranchModel');
-const { parseCSVLine, toCSVValue } = require('../utils/csv');
 
+// ข้อมูลสาขาอยู่ในตาราง branches ของ MySQL (เดิมอ่าน/เขียนไฟล์ branches.csv)
 class BranchService {
-    constructor() {
-        // กำหนด Path ชี้ไปยังไฟล์ branches.csv ในโฟลเดอร์ database
-        this.csvPath = path.join(__dirname, '../database/branches.csv');
-    }
-
-    // 1. ฟังก์ชันช่วยอ่านและแปลงข้อมูลใน CSV เป็น Array
-    readCSV() {
-        try {
-            if (!fs.existsSync(this.csvPath)) {
-                console.error('ไม่พบไฟล์ branches.csv');
-                return [];
-            }
-
-            const fileContent = fs.readFileSync(this.csvPath, 'utf8');
-            const lines = fileContent.trim().split(/\r?\n/);
-
-            if (lines.length < 2) return []; // ไม่มีข้อมูล (มีแค่ header หรือไฟล์ว่าง)
-
-            // อ่านชื่อคอลัมน์จากแถวแรก (branch_id, branch_name, address)
-            // ตัด BOM และหมายเหตุอย่าง "(PK)" ออกจากชื่อคอลัมน์
-            const headers = parseCSVLine(lines[0].replace(/^\uFEFF/, ''))
-                .map(h => h.replace(/\(.*?\)/g, '').trim());
-
-            return lines.slice(1)
-                .filter(line => line.trim() !== '')
-                .map(line => {
-                    const values = parseCSVLine(line);
-                    const row = {};
-                    headers.forEach((header, index) => {
-                        row[header] = values[index];
-                    });
-                    return new BranchModel(row);
-                });
-        } catch (error) {
-            console.error('เกิดข้อผิดพลาดในการอ่านไฟล์ branches.csv:', error);
-            return [];
-        }
-    }
-
-    // 2. ฟังก์ชันช่วยบันทึก Array ของ BranchModel กลับลงไฟล์ CSV
-    writeCSV(branches) {
-        try {
-            // คงรูปแบบ header เดิมของไฟล์ไว้
-            const header = '\uFEFFbranch_id (PK),branch_name,address\n';
-            const rows = branches
-                .map(b => [b.branch_id, b.branch_name, b.address].map(toCSVValue).join(','))
-                .join('\n');
-            fs.writeFileSync(this.csvPath, header + rows, 'utf8');
-            return true;
-        } catch (error) {
-            console.error('เกิดข้อผิดพลาดในการเขียนไฟล์ branches.csv:', error);
-            return false;
-        }
-    }
-
     // ---------------- READ OPERATIONS ----------------
 
-    // ดึงข้อมูลสาขาทั้งหมดจาก CSV
+    // ดึงข้อมูลสาขาทั้งหมด
     async getAllBranches() {
-        return this.readCSV();
-    }
-
-    // ค้นหาสาขาด้วย ID, ชื่อสาขา หรือ ที่อยู่
-    async searchBranches(keyword) {
-        const branches = await this.getAllBranches();
-        if (!keyword) return branches;
-
-        const term = keyword.toLowerCase().trim();
-        return branches.filter(branch => 
-            (branch.branch_id && String(branch.branch_id).toLowerCase().includes(term)) ||
-            (branch.branch_name && branch.branch_name.toLowerCase().includes(term)) || 
-            (branch.address && branch.address.toLowerCase().includes(term))
+        const [rows] = await pool.query(
+            'SELECT branch_id, branch_name, address FROM branches ORDER BY branch_id'
         );
+        return rows.map(row => new BranchModel(row));
     }
 
-    // ดึงข้อมูลเฉพาะ 1 สาขาตาม ID (สำหรับปุ่ม VIEW)
+    // ค้นหาสาขาด้วย ID, ชื่อสาขา หรือ ที่อยู่ (ไม่สนตัวพิมพ์เล็ก/ใหญ่)
+    async searchBranches(keyword) {
+        const term = String(keyword || '').trim();
+        if (!term) return this.getAllBranches();
+
+        // % และ _ ที่ผู้ใช้พิมพ์ต้องเป็นตัวอักษรธรรมดา ไม่ใช่ตัวแทนของ LIKE
+        const like = `%${term.replace(/[\\%_]/g, '\\$&')}%`;
+        const [rows] = await pool.query(
+            `SELECT branch_id, branch_name, address FROM branches
+             WHERE branch_id LIKE ? OR branch_name LIKE ? OR address LIKE ?
+             ORDER BY branch_id`,
+            [like, like, like]
+        );
+        return rows.map(row => new BranchModel(row));
+    }
+
+    // ดึงข้อมูลเฉพาะ 1 สาขาตาม ID (สำหรับปุ่ม VIEW) - ไม่พบจะคืน undefined
     async getBranchById(id) {
-        const branches = await this.getAllBranches();
-        return branches.find(b => String(b.branch_id) === String(id));
+        const [rows] = await pool.query(
+            'SELECT branch_id, branch_name, address FROM branches WHERE branch_id = ? LIMIT 1',
+            [String(id)]
+        );
+        return rows[0] ? new BranchModel(rows[0]) : undefined;
     }
 
     // ---------------- WRITE OPERATIONS (เพิ่ม/แก้ไข/ลบ) ----------------
 
-    // เพิ่มสาขาใหม่ลงไฟล์ CSV
+    // เพิ่มสาขาใหม่
     async createBranch({ branch_id, branch_name, address }) {
-        const branches = await this.getAllBranches();
-        const newBranch = new BranchModel({ branch_id, branch_name, address: address || '' });
-        
-        branches.push(newBranch);
-        this.writeCSV(branches);
-        return newBranch;
+        if (await this.getBranchById(branch_id)) {
+            throw new Error(`มีรหัสสาขา ${branch_id} อยู่แล้ว`);
+        }
+        await pool.query(
+            'INSERT INTO branches (branch_id, branch_name, address) VALUES (?, ?, ?)',
+            [branch_id, branch_name, address || '']
+        );
+        return new BranchModel({ branch_id, branch_name, address: address || '' });
     }
 
-    // แก้ไขข้อมูลสาขาเดิมใน CSV
+    // แก้ไขข้อมูลสาขาเดิม - ไม่พบสาขาจะคืน null
     async updateBranch(id, { branch_name, address }) {
-        const branches = await this.getAllBranches();
-        const index = branches.findIndex(b => String(b.branch_id) === String(id));
-        
-        if (index === -1) return null;
+        const existing = await this.getBranchById(id);
+        if (!existing) return null;
 
-        if (branch_name !== undefined) branches[index].branch_name = branch_name;
-        if (address !== undefined) branches[index].address = address;
+        if (branch_name !== undefined) existing.branch_name = branch_name;
+        if (address !== undefined) existing.address = address;
 
-        this.writeCSV(branches);
-        return branches[index];
+        await pool.query(
+            'UPDATE branches SET branch_name = ?, address = ? WHERE branch_id = ?',
+            [existing.branch_name, existing.address, String(id)]
+        );
+        return existing;
     }
 
-    // ลบสาขาออกจาก CSV
+    // ลบสาขา - ไม่พบ ID ที่ต้องการลบจะคืน false
     async deleteBranch(id) {
-        const branches = await this.getAllBranches();
-        const filtered = branches.filter(b => String(b.branch_id) !== String(id));
-
-        if (filtered.length === branches.length) return false; // ไม่พบ ID ที่ต้องการลบ
-
-        this.writeCSV(filtered);
-        return true;
+        const [result] = await pool.query('DELETE FROM branches WHERE branch_id = ?', [String(id)]);
+        return result.affectedRows > 0;
     }
 }
 
