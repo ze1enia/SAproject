@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard — JAEWAEW SHOP</title>
+    <link rel="stylesheet" href="../assets/css/branch-owner.css">
+    <link rel="stylesheet" href="../assets/css/owner-pages.css">
+</head>
+<body>
+    <div class="owner-page">
+
+        <div class="dashboard">
+            <!-- Filled by js/sidebar.js from GET /api/menu -->
+            <aside class="sidebar" id="sidebar" aria-label="Main menu"></aside>
+
+            <main class="main-content" id="main-content" tabindex="-1">
+                <p class="loading">กำลังโหลดข้อมูล...</p>
+            </main>
+        </div>
+
+    </div>
+
+    <script src="../assets/js/config.js"></script>
+    <script src="../assets/js/sidebar.js"></script>
+    <script src="../assets/js/ui.js"></script>
+    <!-- one file per Owner menu page; each registers itself with SA.pages -->
+    <script src="../assets/js/pages/products.js"></script>
+    <script src="../assets/js/pages/stock-overview.js"></script>
+    <script src="../assets/js/pages/price-tag.js"></script>
+    <script src="../assets/js/pages/stock-request.js"></script>
+    <script src="../assets/js/pages/supplier-claim.js"></script>
+    <script src="../assets/js/pages/delivery-status.js"></script>
+    <script src="../assets/js/pages/sales-report.js"></script>
+    <script src="../assets/js/pages/budget.js"></script>
+    <!-- Staff pages (menu ids come from backend/src/config/menuConfig.js, STAFF) -->
+    <script src="../assets/js/pages/staff-common.js"></script>
+    <script src="../assets/js/pages/staff-manage-stock.js"></script>
+    <script src="../assets/js/pages/staff-product-info.js"></script>
+    <script src="../assets/js/pages/staff-product-status.js"></script>
+    <script src="../assets/js/pages/staff-category.js"></script>
+    <script src="../assets/js/pages/staff-request-review.js"></script>
+    <script src="../assets/js/pages/staff-fifo.js"></script>
+    <script src="../assets/js/pages/staff-purchase-orders.js"></script>
+    <script src="../assets/js/pages/staff-stock-arrival.js"></script>
+    <script src="../assets/js/pages/staff-quality-check.js"></script>
+    <script src="../assets/js/pages/staff-expiry-check.js"></script>
+</body>
+</html>

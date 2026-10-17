@@ -1,21 +1,26 @@
-import express from 'express';
-import { BranchController } from '../controllers/BranchController.js';
+const express = require('express');
+const { BranchController } = require('../controllers/BranchController');
+const authenticate = require('../middlewares/authMiddleware');
+const authorize = require('../middlewares/authorize');
 
 const router = express.Router();
 
 // ดึงสาขาทั้งหมด & ค้นหา
-router.get('/', BranchController.getBranches);
+router.get('/', authenticate, BranchController.getBranches);
 
 // ดึงข้อมูลเฉพาะสาขา (เมื่อกด VIEW)
-router.get('/:id', BranchController.getBranchById);
+router.get('/:id', authenticate, BranchController.getBranchById);
+
+// ตัวเลขสรุป (สินค้าใกล้หมด, ล็อต FIFO, คำขอ/การจัดส่ง/ตรวจรับที่ค้างอยู่)
+router.get('/:id/summary', authenticate, BranchController.getBranchSummary);
 
 // สร้างสาขาใหม่
-router.post('/', BranchController.createBranch);
+router.post('/', authenticate, authorize('Owner'), BranchController.createBranch);
 
 // แก้ไขข้อมูลสาขา (เมนู ...)
-router.put('/:id', BranchController.updateBranch);
+router.put('/:id', authenticate, authorize('Owner'), BranchController.updateBranch);
 
 // ลบสาขา (เมนู ...)
-router.delete('/:id', BranchController.deleteBranch);
+router.delete('/:id', authenticate, authorize('Owner'), BranchController.deleteBranch);
 
-export default router;
+module.exports = router;
