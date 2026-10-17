@@ -27,7 +27,7 @@
         function chosen() { return Object.keys(state.selected); }
 
         function draw() {
-            var active = state.products.filter(function (p) { return p.product_status === 'active'; }).length;
+            var active = state.products.filter(function (p) { return p.product_status === 'Active'; }).length;
             main.innerHTML = SA.pageHeader(title) +
                 '<div class="stat-row">' + UI.statTile('Products shown', UI.int(state.products.length)) +
                     UI.statTile('Active', UI.int(active), 'available for sale / ordering') +
@@ -37,7 +37,7 @@
                     '<select id="ps-cat" class="select" aria-label="Category"><option value="">All categories</option>' +
                         state.categories.map(function (c) { return '<option value="' + esc(c.category_id) + '"' + (c.category_id === state.category ? ' selected' : '') + '>' + esc(c.category_name) + '</option>'; }).join('') + '</select>' +
                     '<select id="ps-status" class="select" aria-label="Status"><option value="">All status</option>' +
-                        '<option value="active"' + (state.status === 'active' ? ' selected' : '') + '>Active</option><option value="inactive"' + (state.status === 'inactive' ? ' selected' : '') + '>Inactive</option></select>' +
+                        '<option value="Active"' + (state.status === 'Active' ? ' selected' : '') + '>Active</option><option value="Inactive"' + (state.status === 'Inactive' ? ' selected' : '') + '>Inactive</option></select>' +
                 '</div>' +
                 (state.products.length ? table() : UI.emptyState('ไม่พบสินค้าที่ค้นหา')) +
                 '<div class="submit-bar" id="ps-bar"></div>';
@@ -73,10 +73,10 @@
             return '<div class="table-scroll"><table class="data-table"><thead><tr><th class="check-cell"><input type="checkbox" id="ps-all" aria-label="Select all shown"' + (allOn ? ' checked' : '') + '></th><th>Product</th><th>Category</th><th>Status</th></tr></thead><tbody>' +
                 state.products.map(function (p) {
                     var on = !!state.selected[p.product_id];
-                    return '<tr class="' + (on ? 'is-checked ' : '') + (p.product_status === 'active' ? '' : 'is-inactive') + '"><td class="check-cell"><input type="checkbox" data-pick="' + esc(p.product_id) + '" aria-label="Select ' + esc(p.product_name) + '"' + (on ? ' checked' : '') + '></td>' +
+                    return '<tr class="' + (on ? 'is-checked ' : '') + (p.product_status === 'Active' ? '' : 'is-inactive') + '"><td class="check-cell"><input type="checkbox" data-pick="' + esc(p.product_id) + '" aria-label="Select ' + esc(p.product_name) + '"' + (on ? ' checked' : '') + '></td>' +
                         '<td><span class="strong">' + esc(p.product_name) + '</span><span class="sub">' + esc(p.product_id) + '</span></td>' +
                         '<td class="cell-muted">' + esc(p.category_name) + '</td>' +
-                        '<td>' + (p.product_status === 'active' ? UI.badge('good', 'Active · พร้อมใช้งาน') : UI.badge('muted', 'Inactive · ไม่พร้อมใช้งาน')) + '</td></tr>';
+                        '<td>' + (p.product_status === 'Active' ? UI.badge('good', 'Active · พร้อมใช้งาน') : UI.badge('muted', 'Inactive · ไม่พร้อมใช้งาน')) + '</td></tr>';
                 }).join('') + '</tbody></table></div>';
         }
 
@@ -85,16 +85,16 @@
             bar.innerHTML = '<span class="summary"><b>' + n + '</b> selected</span>' +
                 '<button type="button" class="btn btn-ghost" id="ps-inactive"' + (n ? '' : ' disabled') + '>ตั้งเป็นไม่พร้อมใช้งาน</button>' +
                 '<button type="button" class="btn btn-primary" id="ps-active"' + (n ? '' : ' disabled') + '>ตั้งเป็นพร้อมใช้งาน</button>';
-            document.getElementById('ps-inactive').addEventListener('click', function () { apply('inactive'); });
-            document.getElementById('ps-active').addEventListener('click', function () { apply('active'); });
+            document.getElementById('ps-inactive').addEventListener('click', function () { apply('Inactive'); });
+            document.getElementById('ps-active').addEventListener('click', function () { apply('Active'); });
         }
 
         async function apply(status) {
             var ids = chosen();
             if (!ids.length) { UI.toast('โปรดเลือกสินค้าอย่างน้อย 1 รายการ', 'bad'); return; }
-            var label = status === 'active' ? 'พร้อมใช้งาน (Active)' : 'ไม่พร้อมใช้งาน (Inactive)';
+            var label = status === 'Active' ? 'พร้อมใช้งาน (Active)' : 'ไม่พร้อมใช้งาน (Inactive)';
             var ok = await UI.confirm({ title: 'อัปเดตสถานะสินค้า', message: 'ตั้งสถานะสินค้า <b>' + ids.length + '</b> รายการเป็น <b>' + label + '</b> ?' +
-                (status === 'inactive' ? '<br>สินค้าจะไม่แสดงในใบสั่งซื้อและคำขอ Stock' : ''), confirmLabel: 'อัปเดตสถานะ', danger: status === 'inactive' });
+                (status === 'Inactive' ? '<br>สินค้าจะไม่แสดงในใบสั่งซื้อและคำขอ Stock' : ''), confirmLabel: 'อัปเดตสถานะ', danger: status === 'Inactive' });
             if (!ok) return;
             try {
                 await SA.api('/staff/products/status', { method: 'PUT', body: { product_ids: ids, status: status } });

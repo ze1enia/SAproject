@@ -8,7 +8,7 @@ class PurchaseOrderService {
     // everything the "new purchase order" form needs
     async formData(dataBranch) {
         const [products] = await pool.query(
-            `SELECT product_id, product_name, unit, cost_price FROM products WHERE LOWER(product_status) = 'active' ORDER BY product_name`
+            `SELECT product_id, product_name, unit, cost_price FROM products WHERE product_status = 'Active' ORDER BY product_name`
         );
         const [suppliers] = await pool.query('SELECT supplier_id, supplier_name, contact_person, phone FROM suppliers ORDER BY supplier_id');
         const [requests] = await pool.query(
@@ -49,7 +49,7 @@ class PurchaseOrderService {
         try {
             await connection.beginTransaction();
 
-            const [found] = await connection.query(`SELECT product_id FROM products WHERE LOWER(product_status) = 'active' AND product_id IN (?)`, [lines.map((l) => l.product_id)]);
+            const [found] = await connection.query(`SELECT product_id FROM products WHERE product_status = 'Active' AND product_id IN (?)`, [lines.map((l) => l.product_id)]);
             if (found.length !== lines.length) throw new ApiError(400, 'พบสินค้าที่ไม่มีอยู่ในระบบหรือปิดใช้งานแล้ว');
 
             let requestId = null;

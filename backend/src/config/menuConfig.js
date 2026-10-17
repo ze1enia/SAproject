@@ -11,6 +11,7 @@ const MENU_CONFIG = {
             { id: 'supplier-claim', label: 'Supplier / Claim', icon: '✉' },
             { id: 'delivery-status', label: 'Delivery Status', icon: '➜' },
             { id: 'sales-report', label: 'Sales Report', icon: '▦' },
+            { id: 'sales-summary', label: 'Daily Sales', icon: '∑' },
             { id: 'budget', label: 'Budget', icon: '◔' }
         ]
     },
