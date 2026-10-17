@@ -21,7 +21,7 @@ const ProductController = {
     updateProduct: handle(async (req) =>
         ok(await service.updateProduct(req.params.id, { ...req.body, __userId: req.user.userId }), 'บันทึกการแก้ไขเรียบร้อยแล้ว')),
 
-    // soft delete (product_status = inactive)
+    // soft delete (product_status = 'Inactive')
     deleteProduct: handle(async (req) => ok(await service.deactivateProduct(req.params.id), 'ปิดการใช้งานสินค้าเรียบร้อยแล้ว')),
 
     updatePrice: handle(async (req) =>

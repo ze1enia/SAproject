@@ -31,7 +31,7 @@ exports.getProductsForStockRequest = async (req, res) => {
        LEFT JOIN branch_stocks bs
           ON p.product_id = bs.product_id
           AND bs.branch_id = ?
-       WHERE LOWER(p.product_status) = 'active'
+       WHERE p.product_status = 'Active'
        ORDER BY p.product_name`,
       [dataBranchId]
     );
@@ -128,7 +128,7 @@ exports.createStockRequest = async (req, res) => {
     const [products] = await connection.execute(
       `SELECT product_id
        FROM products
-       WHERE LOWER(product_status) = 'active'
+       WHERE product_status = 'Active'
          AND product_id IN (${placeholders})`,
       productIds
     );

@@ -1,6 +1,10 @@
 const pool = require('../config/db');
 const { ApiError, nextId, num } = require('../utils/apiHelpers');
 
+// product_status is stored exactly as the document names it: 'Active' / 'Inactive'
+const STATUSES = ['Active', 'Inactive'];
+const toStatus = (value) => STATUSES.find((s) => s.toLowerCase() === String(value || '').trim().toLowerCase()) || null;
+
 const toProduct = (row) => ({
     product_id: row.product_id,
     category_id: row.category_id,
@@ -10,7 +14,7 @@ const toProduct = (row) => ({
     unit: row.unit,
     cost_price: num(row.cost_price),
     selling_price: num(row.selling_price),
-    product_status: String(row.product_status || '').toLowerCase()
+    product_status: toStatus(row.product_status) || String(row.product_status || '')
 });
 
 // "ราคาต้องเป็นตัวเลขมากกว่า 0"
@@ -44,7 +48,7 @@ class ProductService {
         const [rows] = await pool.query(
             `SELECT c.category_id, c.category_name, c.description,
                     COUNT(p.product_id) AS product_count,
-                    SUM(CASE WHEN LOWER(p.product_status) = 'active' THEN 1 ELSE 0 END) AS active_count
+                    SUM(CASE WHEN p.product_status = 'Active' THEN 1 ELSE 0 END) AS active_count
              FROM categories c
              LEFT JOIN products p ON p.category_id = c.category_id
              GROUP BY c.category_id, c.category_name, c.description
@@ -63,7 +67,7 @@ class ProductService {
             params.push(`%${search}%`, `%${search}%`, `%${search}%`);
         }
         if (category) { where.push('p.category_id = ?'); params.push(category); }
-        if (status) { where.push('LOWER(p.product_status) = ?'); params.push(String(status).toLowerCase()); }
+        if (status) { where.push('p.product_status = ?'); params.push(toStatus(status) || String(status)); }
 
         const [rows] = await pool.query(
             `SELECT p.product_id, p.category_id, c.category_name, p.product_name, p.barcode,
@@ -94,7 +98,7 @@ class ProductService {
         const id = await nextId(pool, 'products', 'product_id', 'PRD', 3);
         await pool.query(
             `INSERT INTO products (product_id, category_id, product_name, barcode, unit, cost_price, selling_price, product_status)
-             VALUES (?, ?, ?, ?, ?, ?, ?, 'active')`,
+             VALUES (?, ?, ?, ?, ?, ?, ?, 'Active')`,
             [id, data.category_id, data.product_name, data.barcode, data.unit, data.cost_price, data.selling_price]
         );
         return this.getProduct(id);
@@ -106,8 +110,8 @@ class ProductService {
 
         const data = validateProduct(body);
         await this.assertCategory(data.category_id);
-        const status = body.product_status ? String(body.product_status).toLowerCase() : existing.product_status;
-        if (!['active', 'inactive'].includes(status)) throw new ApiError(400, 'สถานะสินค้าไม่ถูกต้อง');
+        const status = body.product_status ? toStatus(body.product_status) : existing.product_status;
+        if (!STATUSES.includes(status)) throw new ApiError(400, 'สถานะสินค้าไม่ถูกต้อง');
 
         await pool.query(
             `UPDATE products SET category_id = ?, product_name = ?, barcode = ?, unit = ?,
@@ -125,7 +129,7 @@ class ProductService {
     async deactivateProduct(id) {
         const existing = await this.getProduct(id);
         if (!existing) throw new ApiError(404, `ไม่พบสินค้ารหัส ${id}`);
-        await pool.query(`UPDATE products SET product_status = 'inactive' WHERE product_id = ?`, [id]);
+        await pool.query(`UPDATE products SET product_status = 'Inactive' WHERE product_id = ?`, [id]);
         return this.getProduct(id);
     }
 
@@ -134,7 +138,7 @@ class ProductService {
         const price = positive(newPrice, 'ราคาขาย');
         const existing = await this.getProduct(id);
         if (!existing) throw new ApiError(404, `ไม่พบสินค้ารหัส ${id}`);
-        if (existing.product_status !== 'active') throw new ApiError(400, 'ไม่สามารถปรับราคาสินค้าที่ปิดใช้งานอยู่');
+        if (existing.product_status !== 'Active') throw new ApiError(400, 'ไม่สามารถปรับราคาสินค้าที่ปิดใช้งานอยู่');
 
         const connection = await pool.getConnection();
         try {
@@ -181,8 +185,8 @@ class ProductService {
 
     // ---- Staff: product status + read-only detail ---------------------------------
     async setStatus(ids, status) {
-        const value = String(status || '').toLowerCase();
-        if (!['active', 'inactive'].includes(value)) throw new ApiError(400, 'โปรดเลือกสถานะสินค้าที่ต้องการอัปเดต');
+        const value = toStatus(status);
+        if (!value) throw new ApiError(400, 'โปรดเลือกสถานะสินค้าที่ต้องการอัปเดต');
         if (!Array.isArray(ids) || !ids.length) throw new ApiError(400, 'โปรดเลือกสินค้าอย่างน้อย 1 รายการ');
         const unique = [...new Set(ids.map(String))];
         const [found] = await pool.query('SELECT product_id FROM products WHERE product_id IN (?)', [unique]);

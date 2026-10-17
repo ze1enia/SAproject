@@ -45,8 +45,8 @@
                     '<select id="pc-category" class="select" aria-label="Category"><option value="">All categories</option>' + categoryOptions(state.category) + '</select>' +
                     '<select id="pc-status" class="select" aria-label="Status">' +
                         '<option value="">All status</option>' +
-                        '<option value="active"' + (state.status === 'active' ? ' selected' : '') + '>Active</option>' +
-                        '<option value="inactive"' + (state.status === 'inactive' ? ' selected' : '') + '>Inactive</option>' +
+                        '<option value="Active"' + (state.status === 'Active' ? ' selected' : '') + '>Active</option>' +
+                        '<option value="Inactive"' + (state.status === 'Inactive' ? ' selected' : '') + '>Inactive</option>' +
                     '</select>' +
                     '<button type="button" class="btn btn-primary" id="pc-new">+ New product</button>' +
                 '</div>' +
@@ -89,7 +89,7 @@
                 '<thead><tr><th>ID</th><th>Product</th><th>Category</th><th>Unit</th><th class="num">Cost</th><th class="num">Price</th><th class="num">Margin</th><th>Status</th><th class="actions">Actions</th></tr></thead><tbody>' +
                 state.products.map(function (p) {
                     var margin = p.selling_price ? ((p.selling_price - p.cost_price) / p.selling_price) * 100 : 0;
-                    var active = p.product_status === 'active';
+                    var active = p.product_status === 'Active';
                     return '<tr class="' + (active ? '' : 'is-inactive') + '">' +
                         '<td>' + esc(p.product_id) + '</td>' +
                         '<td><span class="strong">' + esc(p.product_name) + '</span>' + (p.barcode ? '<span class="sub">' + esc(p.barcode) + '</span>' : '') + '</td>' +
@@ -112,7 +112,7 @@
 
         function openForm(product) {
             var isEdit = !!product;
-            var p = product || { product_name: '', category_id: state.category || '', barcode: '', unit: '', cost_price: '', selling_price: '', product_status: 'active' };
+            var p = product || { product_name: '', category_id: state.category || '', barcode: '', unit: '', cost_price: '', selling_price: '', product_status: 'Active' };
 
             var m = UI.modal({
                 title: isEdit ? 'Edit product · ' + p.product_id : 'New product',
@@ -209,7 +209,7 @@
             try {
                 await SA.api('/products/' + encodeURIComponent(p.product_id), {
                     method: 'PUT',
-                    body: { product_name: p.product_name, category_id: p.category_id, unit: p.unit, cost_price: p.cost_price, selling_price: p.selling_price, barcode: p.barcode, product_status: 'active' }
+                    body: { product_name: p.product_name, category_id: p.category_id, unit: p.unit, cost_price: p.cost_price, selling_price: p.selling_price, barcode: p.barcode, product_status: 'Active' }
                 });
                 UI.toast('เปิดใช้งานสินค้าอีกครั้งแล้ว');
                 await loadProducts();

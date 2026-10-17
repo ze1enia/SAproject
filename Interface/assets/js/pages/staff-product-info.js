@@ -33,16 +33,16 @@
                     '<select id="pi-cat" class="select" aria-label="Category"><option value="">All categories</option>' +
                         state.categories.map(function (c) { return '<option value="' + esc(c.category_id) + '"' + (c.category_id === state.category ? ' selected' : '') + '>' + esc(c.category_name) + '</option>'; }).join('') + '</select>' +
                     '<select id="pi-status" class="select" aria-label="Status"><option value="">All status</option>' +
-                        '<option value="active"' + (state.status === 'active' ? ' selected' : '') + '>Active</option><option value="inactive"' + (state.status === 'inactive' ? ' selected' : '') + '>Inactive</option></select>' +
+                        '<option value="Active"' + (state.status === 'Active' ? ' selected' : '') + '>Active</option><option value="Inactive"' + (state.status === 'Inactive' ? ' selected' : '') + '>Inactive</option></select>' +
                 '</div>' +
                 (state.products.length
                     ? '<div class="table-scroll"><table class="data-table"><thead><tr><th>ID</th><th>Product</th><th>Category</th><th>Unit</th><th class="num">Price</th><th>Status</th><th class="actions">Detail</th></tr></thead><tbody>' +
                         state.products.map(function (p) {
-                            return '<tr class="' + (p.product_status === 'active' ? '' : 'is-inactive') + '"><td>' + esc(p.product_id) + '</td>' +
+                            return '<tr class="' + (p.product_status === 'Active' ? '' : 'is-inactive') + '"><td>' + esc(p.product_id) + '</td>' +
                                 '<td><span class="strong">' + esc(p.product_name) + '</span>' + (p.barcode ? '<span class="sub">' + esc(p.barcode) + '</span>' : '') + '</td>' +
                                 '<td class="cell-muted">' + esc(p.category_name) + '</td><td class="cell-muted">' + esc(p.unit) + '</td>' +
                                 '<td class="num"><b>' + UI.money(p.selling_price) + '</b></td>' +
-                                '<td>' + (p.product_status === 'active' ? UI.badge('good', 'Active') : UI.badge('muted', 'Inactive')) + '</td>' +
+                                '<td>' + (p.product_status === 'Active' ? UI.badge('good', 'Active') : UI.badge('muted', 'Inactive')) + '</td>' +
                                 '<td class="actions"><button type="button" class="link-button" data-detail="' + esc(p.product_id) + '">View</button></td></tr>';
                         }).join('') + '</tbody></table></div><p class="table-note">' + state.products.length + ' products · read-only</p>'
                     : UI.emptyState('ไม่พบสินค้าที่ค้นหา', 'ลองเปลี่ยนคำค้นหาหรือตัวกรอง'));
@@ -67,7 +67,7 @@
                 m.body.innerHTML =
                     '<div class="split" style="grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px">' +
                         '<div><h3 style="margin:0 0 4px;font-size:20px">' + esc(p.product_name) + '</h3>' +
-                            '<p class="cell-muted" style="margin:0 0 12px;font-size:13px">' + esc(p.category_name) + ' · ' + (p.product_status === 'active' ? 'Active' : 'Inactive') + '</p>' +
+                            '<p class="cell-muted" style="margin:0 0 12px;font-size:13px">' + esc(p.category_name) + ' · ' + (p.product_status === 'Active' ? 'Active' : 'Inactive') + '</p>' +
                             '<dl class="kv"><dt>Unit</dt><dd>' + esc(p.unit) + '</dd><dt>Barcode</dt><dd>' + esc(p.barcode || '—') + '</dd>' +
                             '<dt>Cost</dt><dd>' + UI.money(p.cost_price) + '</dd><dt>Selling price</dt><dd>' + UI.money(p.selling_price) + ' <span class="cell-muted">(' + margin.toFixed(0) + '% margin)</span></dd></dl></div>' +
                         '<div class="panel"><h3>Stock · ' + esc(SA.branchName(state.list, state.branch)) + '</h3>' +
