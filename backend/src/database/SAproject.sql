@@ -173,7 +173,9 @@ INSERT INTO `budgets` (`budget_id`, `branch_id`, `period_start`, `period_end`, `
 ('BUD0001', 'B001', '1/10/2026', '31/10/2026', '100000', 'Active'),
 ('BUD0002', 'B002', '1/10/2026', '31/10/2026', '50000', 'Active'),
 ('BUD0003', 'B001', '1/10/2026', '31/10/2026', '100000', 'Closed'),
-('BUD0004', 'B002', '1/10/2026', '31/10/2026', '75000', 'Active');
+('BUD0004', 'B002', '1/10/2026', '31/10/2026', '75000', 'Active'),
+('BUD0005', 'B001', '1/9/2026', '30/9/2026', '100000', 'Closed'),
+('BUD0006', 'B002', '1/9/2026', '30/9/2026', '50000', 'Closed');
 
 DROP TABLE IF EXISTS `budget_transactions`;
 CREATE TABLE `budget_transactions` (
@@ -194,7 +196,11 @@ INSERT INTO `budget_transactions` (`transaction_id`, `budget_id`, `transaction_t
 ('BTX0005', 'BUD0003', 'Expense', '6371.46', 'Mock inventory purchase expense', '4/10/2026 16:00', 'USR002'),
 ('BTX0006', 'BUD0003', 'Income', '3248.96', 'Mock sales income allocation', '5/10/2026 16:00', 'USR001'),
 ('BTX0007', 'BUD0004', 'Expense', '4836.05', 'Mock inventory purchase expense', '5/10/2026 16:00', 'USR016'),
-('BTX0008', 'BUD0004', 'Income', '7346.38', 'Mock sales income allocation', '6/10/2026 16:00', 'USR001');
+('BTX0008', 'BUD0004', 'Income', '7346.38', 'Mock sales income allocation', '6/10/2026 16:00', 'USR001'),
+('BTX0009', 'BUD0005', 'Expense', '8450.25', 'Mock inventory purchase expense', '28/9/2026 16:00', 'USR002'),
+('BTX0010', 'BUD0005', 'Income', '12360.5', 'Mock sales income allocation', '29/9/2026 16:00', 'USR001'),
+('BTX0011', 'BUD0006', 'Expense', '5230.8', 'Mock inventory purchase expense', '28/9/2026 16:00', 'USR016'),
+('BTX0012', 'BUD0006', 'Income', '9875.4', 'Mock sales income allocation', '29/9/2026 16:00', 'USR001');
 
 DROP TABLE IF EXISTS `categories`;
 CREATE TABLE `categories` (
@@ -1036,9 +1042,11 @@ INSERT INTO `purchase_orders` (`purchase_order_id`, `branch_id`, `supplier_id`, 
 ('PO0003', 'B001', 'SUP003', '', 'USR002', '30/9/2026 11:00', 'PartiallyReceived', '2102.04'),
 ('PO0004', 'B002', 'SUP004', 'REQ0004', 'USR016', '1/10/2026 11:00', 'Draft', '2631.36'),
 ('PO0005', 'B001', 'SUP005', '', 'USR002', '2/10/2026 11:00', 'Received', '2496.12'),
-('PO0006', 'B002', 'SUP001', '', 'USR016', '3/10/2026 11:00', 'Cancelled', '2234.28'),
-('PO0007', 'B001', 'SUP002', '', 'USR002', '4/10/2026 11:00', 'Sent', '1745.04'),
-('PO0008', 'B002', 'SUP003', 'REQ0008', 'USR016', '5/10/2026 11:00', 'Received', '2710.44');
+('PO0006', 'B002', 'SUP001', '', 'USR016', '3/10/2026 11:00', 'Cancelled', '4478.28'),
+('PO0007', 'B001', 'SUP002', '', 'USR002', '4/10/2026 11:00', 'Sent', '3185.04'),
+('PO0008', 'B002', 'SUP003', 'REQ0008', 'USR016', '5/10/2026 11:00', 'Received', '2710.44'),
+('PO0009', 'B002', 'SUP004', 'REQ0012', 'USR016', '8/10/2026 11:00', 'Received', '672'),
+('PO0010', 'B001', 'SUP003', '', 'USR002', '10/10/2026 11:00', 'Received', '497.16');
 
 DROP TABLE IF EXISTS `purchase_order_items`;
 CREATE TABLE `purchase_order_items` (
@@ -1065,7 +1073,17 @@ INSERT INTO `purchase_order_items` (`purchase_order_item_id`, `purchase_order_id
 ('POI0013', 'PO0007', 'PRD035', '24', '15.36'),
 ('POI0014', 'PO0007', 'PRD044', '24', '57.35'),
 ('POI0015', 'PO0008', 'PRD040', '24', '41.43'),
-('POI0016', 'PO0008', 'PRD049', '36', '47.67');
+('POI0016', 'PO0008', 'PRD049', '36', '47.67'),
+('POI0017', 'PO0009', 'PRD036', '24', '28'),
+('POI0018', 'PO0010', 'PRD040', '12', '41.43'),
+('POI0019', 'PO0007', 'PRD003', '48', '4'),
+('POI0020', 'PO0007', 'PRD006', '48', '7'),
+('POI0021', 'PO0007', 'PRD008', '24', '16'),
+('POI0022', 'PO0007', 'PRD012', '24', '22'),
+('POI0023', 'PO0006', 'PRD007', '24', '18'),
+('POI0024', 'PO0006', 'PRD009', '24', '32'),
+('POI0025', 'PO0006', 'PRD011', '36', '15'),
+('POI0026', 'PO0006', 'PRD013', '12', '42');
 
 DROP TABLE IF EXISTS `quality_inspections`;
 CREATE TABLE `quality_inspections` (
@@ -1081,7 +1099,9 @@ INSERT INTO `quality_inspections` (`inspection_id`, `arrival_id`, `inspected_by`
 ('QIN0001', 'ARR0001', 'USR002', '30/9/2026 15:00', 'Pass', 'Packaging and quantities checked; mock inspection'),
 ('QIN0002', 'ARR0003', 'USR002', '2/10/2026 15:00', 'PassWithRemarks', 'Packaging and quantities checked; mock inspection'),
 ('QIN0003', 'ARR0005', 'USR002', '4/10/2026 15:00', 'Pass', 'Packaging and quantities checked; mock inspection'),
-('QIN0004', 'ARR0008', 'USR016', '7/10/2026 15:00', 'Pass', 'Packaging and quantities checked; mock inspection');
+('QIN0004', 'ARR0008', 'USR016', '7/10/2026 15:00', 'Pass', 'Packaging and quantities checked; mock inspection'),
+('QIN0005', 'ARR0009', 'USR016', '12/10/2026 15:00', 'Fail', 'Leaking bottles in every carton; whole lot rejected; mock inspection'),
+('QIN0006', 'ARR0010', 'USR002', '14/10/2026 15:00', 'Fail', 'Expired date printed on every pack; whole lot rejected; mock inspection');
 
 DROP TABLE IF EXISTS `SA`;
 CREATE TABLE `SA` (
@@ -1109,7 +1129,8 @@ INSERT INTO `SA` (`user_id`, `username`, `password_ori`, `role_id`, `branch_id`,
 ('USR013', 'Nattapon', 'Staff@012', 'Staff', 'B013', '$2a$10$eWY1RZQgAHskFFdWUv1dVud6YgYOJRba4Qu30PSLnVBJ0UGipvlfi'),
 ('USR014', 'Rattanaporn', 'Staff@013', 'Staff', 'B014', '$2a$10$o5HmDaGhO/qsDWcXrVZQBeVEwW/woaMhPoqdcnwP/EpFLOerMeyHG'),
 ('USR015', 'Teerapat', 'Staff@014', 'Staff', 'B015', '$2a$10$POogeSVJzaUPSLGyQW1iL.Y1NqZAFLW2OeAJ5o15nxJ39LfCLmqD2'),
-('USR016', 'Manatsawi', 'Staff@015', 'Staff', 'B002', '$2a$10$j8ioBJtwA6tasx347tcDfe9Sirnq1qXZXcQI2SW4jVN1WEGCh3F/m');
+('USR016', 'Manatsawi', 'Staff@015', 'Staff', 'B002', '$2a$10$j8ioBJtwA6tasx347tcDfe9Sirnq1qXZXcQI2SW4jVN1WEGCh3F/m'),
+('USR017', 'Kanokwan', 'Staff@016', 'Staff', 'B016', '$2a$10$kDTYK.RJl6iJmC0XRn1tWO22DXRTnU5/J0S0H0ps7CyseEvdAM/9W');
 
 DROP TABLE IF EXISTS `sales_reports`;
 CREATE TABLE `sales_reports` (
@@ -1147,7 +1168,9 @@ INSERT INTO `stock_arrivals` (`arrival_id`, `purchase_order_id`, `received_by`, 
 ('ARR0001', 'PO0001', 'USR002', '30/9/2026 14:00', 'Received', 'Mock delivery receipt; quantities for testing only'),
 ('ARR0003', 'PO0003', 'USR002', '2/10/2026 14:00', 'Partial', 'Mock delivery receipt; quantities for testing only'),
 ('ARR0005', 'PO0005', 'USR002', '4/10/2026 14:00', 'Received', 'Mock delivery receipt; quantities for testing only'),
-('ARR0008', 'PO0008', 'USR016', '7/10/2026 14:00', 'Received', 'Mock delivery receipt; quantities for testing only');
+('ARR0008', 'PO0008', 'USR016', '7/10/2026 14:00', 'Received', 'Mock delivery receipt; quantities for testing only'),
+('ARR0009', 'PO0009', 'USR016', '12/10/2026 14:00', 'Received', 'Mock delivery receipt; whole lot rejected at QC'),
+('ARR0010', 'PO0010', 'USR002', '14/10/2026 14:00', 'Received', 'Mock delivery receipt; whole lot rejected at QC');
 
 DROP TABLE IF EXISTS `stock_arrival_items`;
 CREATE TABLE `stock_arrival_items` (
@@ -1167,7 +1190,9 @@ INSERT INTO `stock_arrival_items` (`arrival_item_id`, `arrival_id`, `purchase_or
 ('ARI0005', 'ARR0005', 'POI0009', '24', '1', 'BAT0049'),
 ('ARI0006', 'ARR0005', 'POI0010', '36', '1', 'BAT0067'),
 ('ARI0007', 'ARR0008', 'POI0015', '24', '1', 'BAT0080'),
-('ARI0008', 'ARR0008', 'POI0016', '36', '0', 'BAT0098');
+('ARI0008', 'ARR0008', 'POI0016', '36', '0', 'BAT0098'),
+('ARI0009', 'ARR0009', 'POI0017', '24', '24', NULL),
+('ARI0010', 'ARR0010', 'POI0018', '12', '12', NULL);
 
 DROP TABLE IF EXISTS `stock_batches`;
 CREATE TABLE `stock_batches` (
@@ -1659,7 +1684,8 @@ INSERT INTO `users` (`user_id`, `username`, `password_hash`, `role_id`, `branch_
 ('USR013', 'Nattapon', '$2a$10$eWY1RZQgAHskFFdWUv1dVud6YgYOJRba4Qu30PSLnVBJ0UGipvlfi', 'Staff', 'B013'),
 ('USR014', 'Rattanaporn', '$2a$10$o5HmDaGhO/qsDWcXrVZQBeVEwW/woaMhPoqdcnwP/EpFLOerMeyHG', 'Staff', 'B014'),
 ('USR015', 'Teerapat', '$2a$10$POogeSVJzaUPSLGyQW1iL.Y1NqZAFLW2OeAJ5o15nxJ39LfCLmqD2', 'Staff', 'B015'),
-('USR016', 'Manatsawi', '$2a$10$j8ioBJtwA6tasx347tcDfe9Sirnq1qXZXcQI2SW4jVN1WEGCh3F/m', 'Staff', 'B002');
+('USR016', 'Manatsawi', '$2a$10$j8ioBJtwA6tasx347tcDfe9Sirnq1qXZXcQI2SW4jVN1WEGCh3F/m', 'Staff', 'B002'),
+('USR017', 'Kanokwan', '$2a$10$kDTYK.RJl6iJmC0XRn1tWO22DXRTnU5/J0S0H0ps7CyseEvdAM/9W', 'Staff', 'B016');
 
 DROP TABLE IF EXISTS `user_branch_access`;
 CREATE TABLE `user_branch_access` (
@@ -1697,6 +1723,7 @@ INSERT INTO `user_branch_access` (`user_id`, `branch_id`) VALUES
 ('USR013', 'B013'),
 ('USR014', 'B014'),
 ('USR015', 'B015'),
-('USR016', 'B002');
+('USR016', 'B002'),
+('USR017', 'B016');
 
 SET FOREIGN_KEY_CHECKS = 1;
