@@ -1,8 +1,25 @@
 const { BranchService } = require('../services/BranchService');
 const { BranchSummaryService } = require('../services/BranchSummaryService');
+const pool = require('../config/db');
+const { toDataBranchId } = require('../utils/apiHelpers');
 
 const branchService = new BranchService();
 const summaryService = new BranchSummaryService();
+
+// Owner sees every branch. Staff only see branches listed in user_branch_access.
+// Returns null for "no restriction", otherwise a Set of normalized (B###) branch ids.
+async function allowedBranches(user) {
+    if (String(user.role).toLowerCase() === 'owner') return null;
+    const [rows] = await pool.query('SELECT branch_id FROM user_branch_access WHERE user_id = ?', [user.userId]);
+    return new Set(rows.map((r) => toDataBranchId(r.branch_id)).filter(Boolean));
+}
+
+const canSee = (allowed, branchId) => !allowed || allowed.has(toDataBranchId(branchId));
+
+const forbidden = (res) => res.status(403).json({
+    success: false,
+    message: 'คุณไม่มีสิทธิ์เข้าถึงข้อมูลของสาขานี้'
+});
 
 class BranchController {
 
@@ -17,6 +34,9 @@ class BranchController {
             } else {
                 branches = await branchService.getAllBranches();
             }
+
+            const allowed = await allowedBranches(req.user);
+            branches = branches.filter((b) => canSee(allowed, b.branch_id));
 
             return res.status(200).json({
                 success: true,
@@ -36,6 +56,7 @@ class BranchController {
     static async getBranchById(req, res) {
         try {
             const { id } = req.params;
+            if (!canSee(await allowedBranches(req.user), id)) return forbidden(res);
             const branch = await branchService.getBranchById(id);
 
             if (!branch) {
@@ -62,6 +83,7 @@ class BranchController {
     static async getBranchSummary(req, res) {
         try {
             const { id } = req.params;
+            if (!canSee(await allowedBranches(req.user), id)) return forbidden(res);
             const branch = await branchService.getBranchById(id);
 
             if (!branch) {
