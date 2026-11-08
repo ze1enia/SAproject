@@ -142,6 +142,10 @@ INSERT INTO `supplier_claims` (`claim_id`, `arrival_id`, `purchase_order_id`, `s
 SELECT 'CLM0004', 'ARR0010', 'PO0010', 'SUP003', 'สินค้าใกล้หมดอายุ/หมดอายุ', 'Toilet Paper packs printed with expired date; whole lot of 12 rejected', 'Open', 'USR001', '15/10/2026 10:00' FROM DUAL
 WHERE NOT EXISTS (SELECT 1 FROM `supplier_claims` WHERE `claim_id` = 'CLM0004');
 
+INSERT INTO `supplier_claims` (`claim_id`, `arrival_id`, `purchase_order_id`, `supplier_id`, `issue_type`, `details`, `claim_status`, `created_by`, `created_at`)
+SELECT 'CLM0005', 'ARR0008', 'PO0008', 'SUP003', 'สินค้าชำรุด', 'Toilet Paper 6 rolls 1 pack arrived torn and was rejected at QC; asked supplier to credit the unit', 'Open', 'USR001', '8/10/2026 10:00' FROM DUAL
+WHERE NOT EXISTS (SELECT 1 FROM `supplier_claims` WHERE `claim_id` = 'CLM0005');
+
 CREATE TABLE IF NOT EXISTS `expiry_checks` (`check_id` TEXT, `batch_id` TEXT, `branch_id` TEXT, `product_id` TEXT, `status` TEXT, `note` TEXT, `checked_by` TEXT, `checked_at` TEXT) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 INSERT INTO `expiry_checks` (`check_id`, `batch_id`, `branch_id`, `product_id`, `status`, `note`, `checked_by`, `checked_at`)
@@ -253,7 +257,7 @@ UNION ALL SELECT 'purchase_order_items', COUNT(*) FROM purchase_order_items WHER
 UNION ALL SELECT 'po_items_PO0006_PO0007 (expect 12)', COUNT(*) FROM purchase_order_items WHERE purchase_order_id IN ('PO0006','PO0007')
 UNION ALL SELECT 'budget_transactions BTX0009-12 (expect 4)', COUNT(*) FROM budget_transactions WHERE transaction_id IN ('BTX0009','BTX0010','BTX0011','BTX0012')
 UNION ALL SELECT 'USR017 (users / SA / access = expect 3)', (SELECT COUNT(*) FROM users WHERE user_id='USR017') + (SELECT COUNT(*) FROM SA WHERE user_id='USR017') + (SELECT COUNT(*) FROM user_branch_access WHERE user_id='USR017')
-UNION ALL SELECT 'supplier_claims (expect 4)', (SELECT COUNT(*) FROM supplier_claims)
+UNION ALL SELECT 'supplier_claims (expect 5)', (SELECT COUNT(*) FROM supplier_claims)
 UNION ALL SELECT 'expiry_checks (expect 12)', (SELECT COUNT(*) FROM expiry_checks)
 UNION ALL SELECT 'stock_adjustments (expect 5)', (SELECT COUNT(*) FROM stock_adjustments)
 UNION ALL SELECT 'adjustment movements (expect 5)', (SELECT COUNT(*) FROM stock_movements WHERE reference_id LIKE 'ADJ%')

@@ -1748,7 +1748,8 @@ INSERT INTO `supplier_claims` (`claim_id`, `arrival_id`, `purchase_order_id`, `s
 ('CLM0001', 'ARR0003', 'PO0003', 'SUP003', 'อื่นๆ', 'Tomato Ketchup 300g 1 bottle rejected at QC; asked supplier to credit the unit', 'Open', 'USR001', '3/10/2026 10:00'),
 ('CLM0002', 'ARR0005', 'PO0005', 'SUP005', 'สินค้าไม่ครบ', 'Tofu 200g and Shampoo 180ml 1 unit each rejected; asked for replacement', 'Open', 'USR001', '5/10/2026 10:00'),
 ('CLM0003', 'ARR0009', 'PO0009', 'SUP004', 'สินค้าชำรุด', 'Toilet Cleaner 500ml leaking in every carton; whole lot of 24 rejected', 'Open', 'USR001', '13/10/2026 10:00'),
-('CLM0004', 'ARR0010', 'PO0010', 'SUP003', 'สินค้าใกล้หมดอายุ/หมดอายุ', 'Toilet Paper packs printed with expired date; whole lot of 12 rejected', 'Open', 'USR001', '15/10/2026 10:00');
+('CLM0004', 'ARR0010', 'PO0010', 'SUP003', 'สินค้าใกล้หมดอายุ/หมดอายุ', 'Toilet Paper packs printed with expired date; whole lot of 12 rejected', 'Open', 'USR001', '15/10/2026 10:00'),
+('CLM0005', 'ARR0008', 'PO0008', 'SUP003', 'สินค้าชำรุด', 'Toilet Paper 6 rolls 1 pack arrived torn and was rejected at QC; asked supplier to credit the unit', 'Open', 'USR001', '8/10/2026 10:00');
 
 DROP TABLE IF EXISTS `expiry_checks`;
 CREATE TABLE `expiry_checks` (
