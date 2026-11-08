@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 08, 2026 at 02:21 AM
+-- Generation Time: Nov 08, 2026 at 01:57 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -306,6 +306,41 @@ INSERT INTO `categories` (`category_id`, `category_name`, `description`) VALUES
 ('CAT028', 'Kitchen Supplies', 'Kitchen utensils food containers and kitchen accessories'),
 ('CAT029', 'Tobacco Products', 'Tobacco and related retail products'),
 ('CAT030', 'Miscellaneous', 'Products that do not fit other categories');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `expiry_checks`
+--
+
+CREATE TABLE `expiry_checks` (
+  `check_id` varchar(50) NOT NULL,
+  `batch_id` varchar(50) NOT NULL,
+  `branch_id` varchar(50) NOT NULL,
+  `product_id` varchar(50) NOT NULL,
+  `status` varchar(50) NOT NULL,
+  `note` varchar(255) DEFAULT NULL,
+  `checked_by` varchar(50) NOT NULL,
+  `checked_at` varchar(20) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `expiry_checks`
+--
+
+INSERT INTO `expiry_checks` (`check_id`, `batch_id`, `branch_id`, `product_id`, `status`, `note`, `checked_by`, `checked_at`) VALUES
+('CHK0001', 'BAT0051', 'B001', 'PRD026', 'Normal', 'Routine weekly check', 'USR002', '5/10/2026 10:00'),
+('CHK0002', 'BAT0049', 'B001', 'PRD025', 'Near Expiry', 'Expires 14/10, moved to front shelf', 'USR002', '8/10/2026 10:00'),
+('CHK0003', 'BAT0050', 'B002', 'PRD025', 'Near Expiry', 'Expires 14/10, moved to front shelf', 'USR016', '8/10/2026 10:30'),
+('CHK0004', 'BAT0033', 'B001', 'PRD017', 'Near Expiry', 'Expires 16/10, discount sale started', 'USR002', '12/10/2026 10:00'),
+('CHK0005', 'BAT0034', 'B002', 'PRD017', 'Near Expiry', 'Expires 16/10, discount sale started', 'USR016', '12/10/2026 10:30'),
+('CHK0006', 'BAT0049', 'B001', 'PRD025', 'Expired', 'Past expiry date, pulled from shelf', 'USR002', '15/10/2026 10:00'),
+('CHK0007', 'BAT0050', 'B002', 'PRD025', 'Expired', 'Past expiry date, pulled from shelf', 'USR016', '15/10/2026 10:30'),
+('CHK0008', 'BAT0033', 'B001', 'PRD017', 'Expired', 'Past expiry date, pulled from shelf', 'USR002', '17/10/2026 10:00'),
+('CHK0009', 'BAT0034', 'B002', 'PRD017', 'Expired', 'Past expiry date, pulled from shelf', 'USR016', '17/10/2026 10:30'),
+('CHK0010', 'BAT0053', 'B001', 'PRD027', 'Near Expiry', 'Eggs expire 23/10, sell first', 'USR002', '18/10/2026 10:00'),
+('CHK0011', 'BAT0054', 'B002', 'PRD027', 'Near Expiry', 'Eggs expire 23/10, sell first', 'USR016', '18/10/2026 10:30'),
+('CHK0012', 'BAT0053', 'B001', 'PRD027', 'Expired', 'Past expiry date, pulled from shelf', 'USR002', '24/10/2026 10:00');
 
 -- --------------------------------------------------------
 
@@ -1268,6 +1303,35 @@ INSERT INTO `sales_reports` (`report_id`, `branch_id`, `period_start`, `period_e
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `stock_adjustments`
+--
+
+CREATE TABLE `stock_adjustments` (
+  `adjustment_id` varchar(50) NOT NULL,
+  `branch_id` varchar(50) NOT NULL,
+  `product_id` varchar(50) NOT NULL,
+  `adjust_type` varchar(50) NOT NULL,
+  `quantity_before` int(11) NOT NULL DEFAULT 0,
+  `quantity_after` int(11) NOT NULL DEFAULT 0,
+  `reason` varchar(255) NOT NULL,
+  `created_by` varchar(50) NOT NULL,
+  `created_at` varchar(20) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `stock_adjustments`
+--
+
+INSERT INTO `stock_adjustments` (`adjustment_id`, `branch_id`, `product_id`, `adjust_type`, `quantity_before`, `quantity_after`, `reason`, `created_by`, `created_at`) VALUES
+('ADJ0001', 'B001', 'PRD028', 'Set count', 15, 13, 'Stock count correction after weekly count', 'USR002', '9/10/2026 14:00'),
+('ADJ0002', 'B001', 'PRD022', 'Damaged', 44, 42, '2 ice cream bars melted after freezer outage', 'USR002', '9/10/2026 14:05'),
+('ADJ0003', 'B002', 'PRD003', 'Damaged', 37, 35, '2 bottles dented in storage', 'USR016', '9/10/2026 14:10'),
+('ADJ0004', 'B001', 'PRD039', 'Add', 16, 20, 'Found 4 boxes misplaced in the back room', 'USR002', '9/10/2026 14:15'),
+('ADJ0005', 'B002', 'PRD020', 'Remove', 31, 29, '2 packs used as in-store samples', 'USR016', '9/10/2026 14:20');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `stock_arrivals`
 --
 
@@ -1841,6 +1905,35 @@ INSERT INTO `suppliers` (`supplier_id`, `supplier_name`, `contact_person`, `phon
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `supplier_claims`
+--
+
+CREATE TABLE `supplier_claims` (
+  `claim_id` varchar(50) NOT NULL,
+  `arrival_id` varchar(50) NOT NULL,
+  `purchase_order_id` varchar(50) NOT NULL,
+  `supplier_id` varchar(50) NOT NULL,
+  `issue_type` varchar(50) NOT NULL,
+  `details` varchar(255) NOT NULL,
+  `claim_status` varchar(50) NOT NULL DEFAULT 'Open',
+  `created_by` varchar(50) NOT NULL,
+  `created_at` varchar(20) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `supplier_claims`
+--
+
+INSERT INTO `supplier_claims` (`claim_id`, `arrival_id`, `purchase_order_id`, `supplier_id`, `issue_type`, `details`, `claim_status`, `created_by`, `created_at`) VALUES
+('CLM0001', 'ARR0003', 'PO0003', 'SUP003', 'อื่นๆ', 'Tomato Ketchup 300g 1 bottle rejected at QC; asked supplier to credit the unit', 'Open', 'USR001', '3/10/2026 10:00'),
+('CLM0002', 'ARR0005', 'PO0005', 'SUP005', 'สินค้าไม่ครบ', 'Tofu 200g and Shampoo 180ml 1 unit each rejected; asked for replacement', 'Open', 'USR001', '5/10/2026 10:00'),
+('CLM0003', 'ARR0009', 'PO0009', 'SUP004', 'สินค้าชำรุด', 'Toilet Cleaner 500ml leaking in every carton; whole lot of 24 rejected', 'Open', 'USR001', '13/10/2026 10:00'),
+('CLM0004', 'ARR0010', 'PO0010', 'SUP003', 'สินค้าใกล้หมดอายุ/หมดอายุ', 'Toilet Paper packs printed with expired date; whole lot of 12 rejected', 'Open', 'USR001', '15/10/2026 10:00'),
+('CLM0005', 'ARR0008', 'PO0008', 'SUP003', 'สินค้าชำรุด', 'Toilet Paper 6 rolls 1 pack arrived torn and was rejected at QC; asked supplier to credit the unit', 'Open', 'USR001', '8/10/2026 10:00');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `users`
 --
 
@@ -1962,6 +2055,16 @@ ALTER TABLE `categories`
   ADD PRIMARY KEY (`category_id`);
 
 --
+-- Indexes for table `expiry_checks`
+--
+ALTER TABLE `expiry_checks`
+  ADD PRIMARY KEY (`check_id`),
+  ADD KEY `fk_chk_batch` (`batch_id`),
+  ADD KEY `fk_chk_branch` (`branch_id`),
+  ADD KEY `fk_chk_product` (`product_id`),
+  ADD KEY `fk_chk_user` (`checked_by`);
+
+--
 -- Indexes for table `orders`
 --
 ALTER TABLE `orders`
@@ -2026,6 +2129,15 @@ ALTER TABLE `sales_reports`
   ADD KEY `fk_sr_user_rep` (`generated_by`);
 
 --
+-- Indexes for table `stock_adjustments`
+--
+ALTER TABLE `stock_adjustments`
+  ADD PRIMARY KEY (`adjustment_id`),
+  ADD KEY `fk_adj_branch` (`branch_id`),
+  ADD KEY `fk_adj_product` (`product_id`),
+  ADD KEY `fk_adj_user` (`created_by`);
+
+--
 -- Indexes for table `stock_arrivals`
 --
 ALTER TABLE `stock_arrivals`
@@ -2084,6 +2196,16 @@ ALTER TABLE `suppliers`
   ADD PRIMARY KEY (`supplier_id`);
 
 --
+-- Indexes for table `supplier_claims`
+--
+ALTER TABLE `supplier_claims`
+  ADD PRIMARY KEY (`claim_id`),
+  ADD KEY `fk_clm_arrival` (`arrival_id`),
+  ADD KEY `fk_clm_po` (`purchase_order_id`),
+  ADD KEY `fk_clm_supplier` (`supplier_id`),
+  ADD KEY `fk_clm_user` (`created_by`);
+
+--
 -- Indexes for table `users`
 --
 ALTER TABLE `users`
@@ -2120,6 +2242,15 @@ ALTER TABLE `budgets`
 ALTER TABLE `budget_transactions`
   ADD CONSTRAINT `fk_bt_budget` FOREIGN KEY (`budget_id`) REFERENCES `budgets` (`budget_id`),
   ADD CONSTRAINT `fk_bt_user` FOREIGN KEY (`recorded_by`) REFERENCES `users` (`user_id`);
+
+--
+-- Constraints for table `expiry_checks`
+--
+ALTER TABLE `expiry_checks`
+  ADD CONSTRAINT `fk_chk_batch` FOREIGN KEY (`batch_id`) REFERENCES `stock_batches` (`batch_id`),
+  ADD CONSTRAINT `fk_chk_branch` FOREIGN KEY (`branch_id`) REFERENCES `branches` (`branch_id`),
+  ADD CONSTRAINT `fk_chk_product` FOREIGN KEY (`product_id`) REFERENCES `products` (`product_id`),
+  ADD CONSTRAINT `fk_chk_user` FOREIGN KEY (`checked_by`) REFERENCES `users` (`user_id`);
 
 --
 -- Constraints for table `orders`
@@ -2178,6 +2309,14 @@ ALTER TABLE `sales_reports`
   ADD CONSTRAINT `fk_sr_user_rep` FOREIGN KEY (`generated_by`) REFERENCES `users` (`user_id`);
 
 --
+-- Constraints for table `stock_adjustments`
+--
+ALTER TABLE `stock_adjustments`
+  ADD CONSTRAINT `fk_adj_branch` FOREIGN KEY (`branch_id`) REFERENCES `branches` (`branch_id`),
+  ADD CONSTRAINT `fk_adj_product` FOREIGN KEY (`product_id`) REFERENCES `products` (`product_id`),
+  ADD CONSTRAINT `fk_adj_user` FOREIGN KEY (`created_by`) REFERENCES `users` (`user_id`);
+
+--
 -- Constraints for table `stock_arrivals`
 --
 ALTER TABLE `stock_arrivals`
@@ -2224,6 +2363,15 @@ ALTER TABLE `stock_request_items`
   ADD CONSTRAINT `fk_sri_request` FOREIGN KEY (`request_id`) REFERENCES `stock_requests` (`request_id`);
 
 --
+-- Constraints for table `supplier_claims`
+--
+ALTER TABLE `supplier_claims`
+  ADD CONSTRAINT `fk_clm_arrival` FOREIGN KEY (`arrival_id`) REFERENCES `stock_arrivals` (`arrival_id`),
+  ADD CONSTRAINT `fk_clm_po` FOREIGN KEY (`purchase_order_id`) REFERENCES `purchase_orders` (`purchase_order_id`),
+  ADD CONSTRAINT `fk_clm_supplier` FOREIGN KEY (`supplier_id`) REFERENCES `suppliers` (`supplier_id`),
+  ADD CONSTRAINT `fk_clm_user` FOREIGN KEY (`created_by`) REFERENCES `users` (`user_id`);
+
+--
 -- Constraints for table `users`
 --
 ALTER TABLE `users`
@@ -2235,76 +2383,6 @@ ALTER TABLE `users`
 ALTER TABLE `user_branch_access`
   ADD CONSTRAINT `fk_uba_branch` FOREIGN KEY (`branch_id`) REFERENCES `branches` (`branch_id`),
   ADD CONSTRAINT `fk_uba_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
---
--- Mock data for supplier_claims (UC-13), expiry_checks (UC-11), stock_adjustments (Manage Stock)
---
-
-DROP TABLE IF EXISTS `supplier_claims`;
-CREATE TABLE `supplier_claims` (
-  `claim_id` TEXT,
-  `arrival_id` TEXT,
-  `purchase_order_id` TEXT,
-  `supplier_id` TEXT,
-  `issue_type` TEXT,
-  `details` TEXT,
-  `claim_status` TEXT,
-  `created_by` TEXT,
-  `created_at` TEXT
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
-INSERT INTO `supplier_claims` (`claim_id`, `arrival_id`, `purchase_order_id`, `supplier_id`, `issue_type`, `details`, `claim_status`, `created_by`, `created_at`) VALUES
-('CLM0001', 'ARR0003', 'PO0003', 'SUP003', 'อื่นๆ', 'Tomato Ketchup 300g 1 bottle rejected at QC; asked supplier to credit the unit', 'Open', 'USR001', '3/10/2026 10:00'),
-('CLM0002', 'ARR0005', 'PO0005', 'SUP005', 'สินค้าไม่ครบ', 'Tofu 200g and Shampoo 180ml 1 unit each rejected; asked for replacement', 'Open', 'USR001', '5/10/2026 10:00'),
-('CLM0003', 'ARR0009', 'PO0009', 'SUP004', 'สินค้าชำรุด', 'Toilet Cleaner 500ml leaking in every carton; whole lot of 24 rejected', 'Open', 'USR001', '13/10/2026 10:00'),
-('CLM0004', 'ARR0010', 'PO0010', 'SUP003', 'สินค้าใกล้หมดอายุ/หมดอายุ', 'Toilet Paper packs printed with expired date; whole lot of 12 rejected', 'Open', 'USR001', '15/10/2026 10:00'),
-('CLM0005', 'ARR0008', 'PO0008', 'SUP003', 'สินค้าชำรุด', 'Toilet Paper 6 rolls 1 pack arrived torn and was rejected at QC; asked supplier to credit the unit', 'Open', 'USR001', '8/10/2026 10:00');
-
-DROP TABLE IF EXISTS `expiry_checks`;
-CREATE TABLE `expiry_checks` (
-  `check_id` TEXT,
-  `batch_id` TEXT,
-  `branch_id` TEXT,
-  `product_id` TEXT,
-  `status` TEXT,
-  `note` TEXT,
-  `checked_by` TEXT,
-  `checked_at` TEXT
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
-INSERT INTO `expiry_checks` (`check_id`, `batch_id`, `branch_id`, `product_id`, `status`, `note`, `checked_by`, `checked_at`) VALUES
-('CHK0001', 'BAT0051', 'B001', 'PRD026', 'Normal', 'Routine weekly check', 'USR002', '5/10/2026 10:00'),
-('CHK0002', 'BAT0049', 'B001', 'PRD025', 'Near Expiry', 'Expires 14/10, moved to front shelf', 'USR002', '8/10/2026 10:00'),
-('CHK0003', 'BAT0050', 'B002', 'PRD025', 'Near Expiry', 'Expires 14/10, moved to front shelf', 'USR016', '8/10/2026 10:30'),
-('CHK0004', 'BAT0033', 'B001', 'PRD017', 'Near Expiry', 'Expires 16/10, discount sale started', 'USR002', '12/10/2026 10:00'),
-('CHK0005', 'BAT0034', 'B002', 'PRD017', 'Near Expiry', 'Expires 16/10, discount sale started', 'USR016', '12/10/2026 10:30'),
-('CHK0006', 'BAT0049', 'B001', 'PRD025', 'Expired', 'Past expiry date, pulled from shelf', 'USR002', '15/10/2026 10:00'),
-('CHK0007', 'BAT0050', 'B002', 'PRD025', 'Expired', 'Past expiry date, pulled from shelf', 'USR016', '15/10/2026 10:30'),
-('CHK0008', 'BAT0033', 'B001', 'PRD017', 'Expired', 'Past expiry date, pulled from shelf', 'USR002', '17/10/2026 10:00'),
-('CHK0009', 'BAT0034', 'B002', 'PRD017', 'Expired', 'Past expiry date, pulled from shelf', 'USR016', '17/10/2026 10:30'),
-('CHK0010', 'BAT0053', 'B001', 'PRD027', 'Near Expiry', 'Eggs expire 23/10, sell first', 'USR002', '18/10/2026 10:00'),
-('CHK0011', 'BAT0054', 'B002', 'PRD027', 'Near Expiry', 'Eggs expire 23/10, sell first', 'USR016', '18/10/2026 10:30'),
-('CHK0012', 'BAT0053', 'B001', 'PRD027', 'Expired', 'Past expiry date, pulled from shelf', 'USR002', '24/10/2026 10:00');
-
-DROP TABLE IF EXISTS `stock_adjustments`;
-CREATE TABLE `stock_adjustments` (
-  `adjustment_id` TEXT,
-  `branch_id` TEXT,
-  `product_id` TEXT,
-  `adjust_type` TEXT,
-  `quantity_before` TEXT,
-  `quantity_after` TEXT,
-  `reason` TEXT,
-  `created_by` TEXT,
-  `created_at` TEXT
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
-INSERT INTO `stock_adjustments` (`adjustment_id`, `branch_id`, `product_id`, `adjust_type`, `quantity_before`, `quantity_after`, `reason`, `created_by`, `created_at`) VALUES
-('ADJ0001', 'B001', 'PRD028', 'Set count', '15', '13', 'Stock count correction after weekly count', 'USR002', '9/10/2026 14:00'),
-('ADJ0002', 'B001', 'PRD022', 'Damaged', '44', '42', '2 ice cream bars melted after freezer outage', 'USR002', '9/10/2026 14:05'),
-('ADJ0003', 'B002', 'PRD003', 'Damaged', '37', '35', '2 bottles dented in storage', 'USR016', '9/10/2026 14:10'),
-('ADJ0004', 'B001', 'PRD039', 'Add', '16', '20', 'Found 4 boxes misplaced in the back room', 'USR002', '9/10/2026 14:15'),
-('ADJ0005', 'B002', 'PRD020', 'Remove', '31', '29', '2 packs used as in-store samples', 'USR016', '9/10/2026 14:20');
-
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
