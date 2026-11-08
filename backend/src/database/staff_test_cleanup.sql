@@ -15,7 +15,6 @@
 --      supplier_claims (created by the Owner's Supplier / Claim page) is not part
 --      of the seed - drop it too if you want it empty:
 --          DROP TABLE IF EXISTS supplier_claims;
---      If logins stop working after a re-import, run: npm run seed:passwords
 -- =============================================================================
 
 USE `saproject_db`;

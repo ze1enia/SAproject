@@ -7,6 +7,9 @@
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
+CREATE DATABASE IF NOT EXISTS `saproject_db` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+USE `saproject_db`;
+
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
@@ -1231,42 +1234,6 @@ INSERT INTO `quality_inspections` (`inspection_id`, `arrival_id`, `inspected_by`
 
 -- --------------------------------------------------------
 
---
--- Table structure for table `sa`
---
-
-CREATE TABLE `sa` (
-  `user_id` varchar(50) NOT NULL,
-  `username` text DEFAULT NULL,
-  `password_ori` text DEFAULT NULL,
-  `role_id` text DEFAULT NULL,
-  `branch_id` varchar(50) NOT NULL,
-  `password_hash` text DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `sa`
---
-
-INSERT INTO `sa` (`user_id`, `username`, `password_ori`, `role_id`, `branch_id`, `password_hash`) VALUES
-('USR001', 'Sunee', 'Owner@123', 'Owner', 'B001', '$2a$10$umlPoGlY9081MewTkxcbWepNGbptUaU6wJbzqrTAFUWs2SMqMEIfO'),
-('USR002', 'Kittipong', 'Staff@001', 'Staff', 'B001', '$2a$10$H8pAtH4pwjMpQIvTrhKiU.EOM2OpQvbLF8EqtUcX/a1A9knJtYDAS'),
-('USR003', 'Pimchanok', 'Staff@002', 'Staff', 'B003', '$2a$10$xrKkk.o.3bIoi1FWqB2YrepGqVcx/wFmImH0dccPaNRUDeucgv5bq'),
-('USR004', 'Thanakorn', 'Staff@003', 'Staff', 'B004', '$2a$10$ngVNKyJTpH45lZRHJ74Z2OQSWSAbQlLhmNpH3jfu.ybJ70uSlPbhy'),
-('USR005', 'Natcha', 'Staff@004', 'Staff', 'B005', '$2a$10$sudU2HT8GFLbA4pyL504YuwNdlRYWR2.LPMFMS1nlNfPpAm3U7EHe'),
-('USR006', 'Pakorn', 'Staff@005', 'Staff', 'B006', '$2a$10$q/1m0HBhwRZpk29CVbRcVeoymfp8t83CloymEK54DXDPtVkSp62yK'),
-('USR007', 'Chanakan', 'Staff@006', 'Staff', 'B007', '$2a$10$l0tK7LBMfN6ODyznIpf4J.9UZMSLRceZcoboKs0fF6wJ3hoqb8AJy'),
-('USR008', 'Phurinat', 'Staff@007', 'Staff', 'B008', '$2a$10$ktn75BcsszQMoF.KmdXGQOkaL4E4zQGpxtcHKGWrQWsFnKknucXhm'),
-('USR009', 'Siriporn', 'Staff@008', 'Staff', 'B009', '$2a$10$3rEY0r37OFVwemAkUha9E.r/wW8B69kCSXgqwpTm1.30gK8Z3634i'),
-('USR010', 'Athicha', 'Staff@009', 'Staff', 'B010', '$2a$10$33sp9ACE6CYUkOQdMUSpTuea.5xMHERJ4IfgvCy5r/N92LL5wfG4e'),
-('USR011', 'Woramet', 'Staff@010', 'Staff', 'B011', '$2a$10$HXtN0PrUPvVsfNNUcFJWCu8WozGesxK3aB.nC93RiF.C1LYLb4Une'),
-('USR012', 'Paweenuch', 'Staff@011', 'Staff', 'B012', '$2a$10$2sjrXl.wwMS4/xmCrPtGDuxkWY2xKDAKvItje2E2LqyyXKmozqTeG'),
-('USR013', 'Nattapon', 'Staff@012', 'Staff', 'B013', '$2a$10$eWY1RZQgAHskFFdWUv1dVud6YgYOJRba4Qu30PSLnVBJ0UGipvlfi'),
-('USR014', 'Rattanaporn', 'Staff@013', 'Staff', 'B014', '$2a$10$o5HmDaGhO/qsDWcXrVZQBeVEwW/woaMhPoqdcnwP/EpFLOerMeyHG'),
-('USR015', 'Teerapat', 'Staff@014', 'Staff', 'B015', '$2a$10$POogeSVJzaUPSLGyQW1iL.Y1NqZAFLW2OeAJ5o15nxJ39LfCLmqD2'),
-('USR016', 'Manatsawi', 'Staff@015', 'Staff', 'B002', '$2a$10$j8ioBJtwA6tasx347tcDfe9Sirnq1qXZXcQI2SW4jVN1WEGCh3F/m'),
-('USR017', 'Kanokwan', 'Staff@016', 'Staff', 'B016', '$2a$10$kDTYK.RJl6iJmC0XRn1tWO22DXRTnU5/J0S0H0ps7CyseEvdAM/9W');
-
 -- --------------------------------------------------------
 
 --
@@ -2051,13 +2018,6 @@ ALTER TABLE `quality_inspections`
   ADD KEY `fk_qi_user` (`inspected_by`);
 
 --
--- Indexes for table `sa`
---
-ALTER TABLE `sa`
-  ADD PRIMARY KEY (`user_id`),
-  ADD KEY `fk_sa_backup_branch` (`branch_id`);
-
---
 -- Indexes for table `sales_reports`
 --
 ALTER TABLE `sales_reports`
@@ -2209,12 +2169,6 @@ ALTER TABLE `purchase_order_items`
 ALTER TABLE `quality_inspections`
   ADD CONSTRAINT `fk_qi_arrival` FOREIGN KEY (`arrival_id`) REFERENCES `stock_arrivals` (`arrival_id`),
   ADD CONSTRAINT `fk_qi_user` FOREIGN KEY (`inspected_by`) REFERENCES `users` (`user_id`);
-
---
--- Constraints for table `sa`
---
-ALTER TABLE `sa`
-  ADD CONSTRAINT `fk_sa_backup_branch` FOREIGN KEY (`branch_id`) REFERENCES `branches` (`branch_id`);
 
 --
 -- Constraints for table `sales_reports`

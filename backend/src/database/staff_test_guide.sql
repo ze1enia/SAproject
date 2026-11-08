@@ -3,7 +3,7 @@
 -- =============================================================================
 -- The seed data now has a Staff member for each branch that has data, so no extra
 -- setup is needed. Run this file to see who can work where and what each Staff
--- page has to work with. Accounts' passwords: SELECT username, password_ori FROM SA
+-- page has to work with. Test account passwords are kept outside the repo
 --
 --   USR002  Kittipong  Staff  -> B001 BKK            (fixed branch chip)
 --   USR016  Manatsawi  Staff  -> B002 Samut Prakan   (fixed branch chip)

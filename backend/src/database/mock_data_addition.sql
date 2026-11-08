@@ -110,11 +110,7 @@ WHERE NOT EXISTS (SELECT 1 FROM `budget_transactions` WHERE `transaction_id` = '
 -- PO0010 supplier fix (toilet paper comes from Everyday Grocery, as in PO0008)
 UPDATE `purchase_orders` SET `supplier_id` = 'SUP003' WHERE `purchase_order_id` = 'PO0010' AND `supplier_id` = 'SUP005';
 
--- Staff for branch B016 (Prae), which had none. Login: Kanokwan / Staff@016
-INSERT INTO `SA` (`user_id`, `username`, `password_ori`, `role_id`, `branch_id`, `password_hash`)
-SELECT 'USR017', 'Kanokwan', 'Staff@016', 'Staff', 'B016', '$2a$10$kDTYK.RJl6iJmC0XRn1tWO22DXRTnU5/J0S0H0ps7CyseEvdAM/9W' FROM DUAL
-WHERE NOT EXISTS (SELECT 1 FROM `SA` WHERE `user_id` = 'USR017');
-
+-- Staff for branch B016 (Prae), which had none. Login: Kanokwan
 INSERT INTO `users` (`user_id`, `username`, `password_hash`, `role_id`, `branch_id`)
 SELECT 'USR017', 'Kanokwan', '$2a$10$kDTYK.RJl6iJmC0XRn1tWO22DXRTnU5/J0S0H0ps7CyseEvdAM/9W', 'Staff', 'B016' FROM DUAL
 WHERE NOT EXISTS (SELECT 1 FROM `users` WHERE `user_id` = 'USR017');
@@ -256,7 +252,7 @@ SELECT 'purchase_orders' t, COUNT(*) n FROM purchase_orders WHERE purchase_order
 UNION ALL SELECT 'purchase_order_items', COUNT(*) FROM purchase_order_items WHERE purchase_order_item_id='POI0018'
 UNION ALL SELECT 'po_items_PO0006_PO0007 (expect 12)', COUNT(*) FROM purchase_order_items WHERE purchase_order_id IN ('PO0006','PO0007')
 UNION ALL SELECT 'budget_transactions BTX0009-12 (expect 4)', COUNT(*) FROM budget_transactions WHERE transaction_id IN ('BTX0009','BTX0010','BTX0011','BTX0012')
-UNION ALL SELECT 'USR017 (users / SA / access = expect 3)', (SELECT COUNT(*) FROM users WHERE user_id='USR017') + (SELECT COUNT(*) FROM SA WHERE user_id='USR017') + (SELECT COUNT(*) FROM user_branch_access WHERE user_id='USR017')
+UNION ALL SELECT 'USR017 (users / access = expect 2)', (SELECT COUNT(*) FROM users WHERE user_id='USR017') + (SELECT COUNT(*) FROM user_branch_access WHERE user_id='USR017')
 UNION ALL SELECT 'supplier_claims (expect 5)', (SELECT COUNT(*) FROM supplier_claims)
 UNION ALL SELECT 'expiry_checks (expect 12)', (SELECT COUNT(*) FROM expiry_checks)
 UNION ALL SELECT 'stock_adjustments (expect 5)', (SELECT COUNT(*) FROM stock_adjustments)

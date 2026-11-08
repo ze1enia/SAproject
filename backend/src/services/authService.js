@@ -18,11 +18,11 @@ const authService = {
       throw new Error('Incorrect username or password.');
     }
 
-    //password_hash is empty until `npm run seed:passwords` has been run,
+    //password_hash is empty for accounts that have no password set,
     //so flag that separately in the logs instead of silently rejecting.
     if (!user.password_hash) {
       console.warn(
-        `User ${user.username} has no password_hash - run "npm run seed:passwords".`
+        `User ${user.username} has no password_hash.`
       );
       throw new Error('Incorrect username or password.');
     }
